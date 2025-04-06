@@ -6,7 +6,7 @@ import './styles/index.css';
 import App from './App';
 
 // Set up axios defaults for API requests
-axios.defaults.baseURL = 'http://localhost:3000'; // API Gateway URL is on port 3000
+axios.defaults.baseURL = process.env.REACT_APP_API_URL || 'http://localhost:3000'; // API Gateway URL
 axios.defaults.withCredentials = true; // Enable cookies for cross-origin requests
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
