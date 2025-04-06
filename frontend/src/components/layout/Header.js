@@ -1,118 +1,69 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import NotificationButton from '../notifications/NotificationButton';
+import timeoutLogo from '../../assets/icons/timeout_logo.png';
 
 // Following Single Responsibility Principle - Header only handles navigation
 const Header = () => {
-  const { user, logout, isAuthenticated } = useAuth();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
-  // Toggle mobile menu
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
+  // Navigate to profile page
+  const handleProfileClick = () => {
+    navigate('/profile');
+  };
+
+  // Handle logo click based on authentication status
+  const handleLogoClick = (e) => {
+    if (isAuthenticated) {
+      e.preventDefault(); // Prevent default navigation for authenticated users
+      navigate('/onlyforyou'); // Navigate to the "Only For You" page
+    }
   };
 
   return (
-    <header className="bg-indigo-600 text-white shadow-md">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+    <header className="bg-indigo-600 text-white shadow-md fixed top-0 left-0 right-0 z-50">
+      <div className="container mx-auto px-3 py-3 md:px-4 md:py-4 flex justify-between items-center relative">
+        {/* Left side - App name */}
         <div className="flex items-center">
-          <Link to="/" className="text-2xl font-bold">Tymout</Link>
+          <Link 
+            to="/" 
+            className="text-xl md:text-2xl font-bold"
+            onClick={handleLogoClick}
+          >
+            Tymout
+          </Link>
         </div>
         
-        <nav className="hidden md:block">
-          <ul className="flex space-x-6">
-            <li><Link to="/" className="hover:text-indigo-200">Home</Link></li>
-            <li><Link to="/discover" className="hover:text-indigo-200">Discover</Link></li>
-            {isAuthenticated && (
-              <>
-                <li><Link to="/dashboard" className="hover:text-indigo-200">Dashboard</Link></li>
-                <li><Link to="/create" className="hover:text-indigo-200">Create Table</Link></li>
-              </>
-            )}
-            <li><Link to="/about" className="hover:text-indigo-200">About</Link></li>
-          </ul>
-        </nav>
+        {/* Center - Notification icon with logo */}
+        <div className="absolute left-1/2 transform -translate-x-1/2 flex justify-center items-center">
+          {isAuthenticated && <NotificationButton logoSrc={timeoutLogo} size="large" />}
+        </div>
         
+        {/* Right side - User controls */}
         <div className="flex items-center space-x-4">
           {isAuthenticated ? (
-            <>
-              <div className="relative group">
-                <button className="flex items-center space-x-2 focus:outline-none">
-                  <img 
-                    src={user?.profilePicture || "https://via.placeholder.com/40"} 
-                    alt="Profile" 
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
-                  <span className="hidden md:inline">{user?.name || 'User'}</span>
-                </button>
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
-                  <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</Link>
-                  <Link to="/my-tables" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Tables</Link>
-                  <button 
-                    onClick={logout} 
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Sign out
-                  </button>
-                </div>
-              </div>
-            </>
+            <button 
+              onClick={handleProfileClick}
+              className="flex items-center space-x-2 focus:outline-none hover:opacity-80 transition-opacity"
+              aria-label="Profile"
+            >
+              <img 
+                src={user?.profilePicture || "https://via.placeholder.com/40"} 
+                alt="Profile" 
+                className="w-8 h-8 rounded-full object-cover border-2 border-white"
+              />
+              <span className="hidden md:inline">{user?.name || 'User'}</span>
+            </button>
           ) : (
             <>
               <Link to="/login" className="hover:text-indigo-200">Login</Link>
               <Link to="/signup" className="bg-white text-indigo-600 px-4 py-2 rounded-md hover:bg-indigo-100">Sign Up</Link>
             </>
           )}
-          
-          {/* Mobile menu button */}
-          <button 
-            className="md:hidden text-white focus:outline-none"
-            onClick={toggleMobileMenu}
-          >
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
         </div>
       </div>
-
-      {/* Mobile menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden bg-indigo-700 px-4 py-2">
-          <nav>
-            <ul className="space-y-2">
-              <li><Link to="/" className="block py-2 hover:text-indigo-200">Home</Link></li>
-              <li><Link to="/discover" className="block py-2 hover:text-indigo-200">Discover</Link></li>
-              {isAuthenticated && (
-                <>
-                  <li><Link to="/dashboard" className="block py-2 hover:text-indigo-200">Dashboard</Link></li>
-                  <li><Link to="/create" className="block py-2 hover:text-indigo-200">Create Table</Link></li>
-                </>
-              )}
-              <li><Link to="/about" className="block py-2 hover:text-indigo-200">About</Link></li>
-              {isAuthenticated ? (
-                <>
-                  <li><Link to="/profile" className="block py-2 hover:text-indigo-200">Profile</Link></li>
-                  <li><Link to="/my-tables" className="block py-2 hover:text-indigo-200">My Tables</Link></li>
-                  <li>
-                    <button 
-                      onClick={logout} 
-                      className="block w-full text-left py-2 text-white hover:text-indigo-200"
-                    >
-                      Sign out
-                    </button>
-                  </li>
-                </>
-              ) : (
-                <>
-                  <li><Link to="/login" className="block py-2 hover:text-indigo-200">Login</Link></li>
-                  <li><Link to="/signup" className="block py-2 hover:text-indigo-200">Sign Up</Link></li>
-                </>
-              )}
-            </ul>
-          </nav>
-        </div>
-      )}
     </header>
   );
 };

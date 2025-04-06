@@ -47,3 +47,16 @@ body {
 .main-content {
   min-height: calc(100vh - 64px - 300px); /* Viewport height minus header and footer */
 }
+
+/* Custom utility classes */
+@layer utilities {
+  /* Hide scrollbar but maintain scroll functionality */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+}
