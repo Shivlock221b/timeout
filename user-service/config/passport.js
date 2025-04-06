@@ -26,12 +26,12 @@ console.log('API_GATEWAY_PORT:', API_GATEWAY_PORT);
 console.log('FRONTEND_PORT:', FRONTEND_PORT);
 
 // Construct the callback URL using environment variables
-const CALLBACK_URL = `http://localhost:${API_GATEWAY_PORT}/api/users/auth/google/callback`;
+const CALLBACK_URL = `https://tymoutapi-gateway-production.up.railway.app/api/users/auth/google/callback`;
 
 // Define authorized origins
 const AUTHORIZED_ORIGINS = [
-  `http://localhost:${API_GATEWAY_PORT}`,
-  `http://localhost:${FRONTEND_PORT}`
+  `https://tymoutapi-gateway-production.up.railway.app`,
+  `https://timeout-frontend.vercel.app/`
 ];
 
 // Serialize user for the session
