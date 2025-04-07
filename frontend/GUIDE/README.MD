@@ -137,6 +137,11 @@
   - Method: No direct API calls, delegates to child components
   - Purpose: Organize and display different settings sections.
 
+- **src/pages/HomePage.js**  
+  - Function: `useEffect()` hook  
+  - Method: S3 Bucket access - `https://tymouttest.s3.ap-south-1.amazonaws.com/home/hero-image.jpg`  
+  - Purpose: Fetch hero image from AWS S3 bucket for the home page.
+
 ## Application Architecture
 
 ### Navigation Structure

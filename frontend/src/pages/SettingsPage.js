@@ -36,7 +36,7 @@ const SettingsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 overflow-x-hidden">
+    <div className="min-h-screen bg-white overflow-x-hidden">
       <div className="max-w-7xl mx-auto py-6 px-2 sm:px-6 lg:px-8">
         <div className="px-2 py-6 sm:px-0">
           <div className="bg-white shadow sm:rounded-lg">

@@ -29,7 +29,7 @@ const AuthSuccess = () => {
         // Wait for authentication to complete
         if (!loading && isAuthenticated) {
           console.log('Authentication successful, redirecting to dashboard');
-          navigate('/dashboard');
+          navigate('/onlyforyou');
         }
       } catch (err) {
         console.error('Error processing authentication:', err);
@@ -43,7 +43,7 @@ const AuthSuccess = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="p-8 bg-white shadow-md rounded-lg">
           <h2 className="text-2xl font-bold mb-4 text-center text-red-600">{error}</h2>
           <p className="text-center text-gray-600">Redirecting to login page...</p>
@@ -53,7 +53,7 @@ const AuthSuccess = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-white">
       <div className="p-8 bg-white shadow-md rounded-lg">
         <h2 className="text-2xl font-bold mb-4 text-center">Authenticating...</h2>
         <div className="flex justify-center">

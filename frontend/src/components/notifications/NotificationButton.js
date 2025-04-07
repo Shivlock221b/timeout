@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useNotifications } from '../../context/NotificationsContext';
 
 // Single Responsibility Principle: NotificationButton component only handles displaying the notification button and navigation
-const NotificationButton = ({ logoSrc, size = 'normal' }) => {
+const NotificationButton = ({ logoSrc, size = 'normal', className = '' }) => {
   const { unreadCount } = useNotifications();
   const navigate = useNavigate();
 
@@ -45,12 +45,12 @@ const NotificationButton = ({ logoSrc, size = 'normal' }) => {
           <img 
             src={logoSrc} 
             alt="Notifications" 
-            className={`${sizeClasses} object-contain rounded-full`}
+            className={`${sizeClasses} object-contain rounded-full ${className}`}
           />
         ) : (
           <svg 
+            className={`${sizeClasses} ${className}`}
             xmlns="http://www.w3.org/2000/svg" 
-            className="h-6 w-6" 
             fill="none" 
             viewBox="0 0 24 24" 
             stroke="currentColor"
@@ -63,14 +63,13 @@ const NotificationButton = ({ logoSrc, size = 'normal' }) => {
             />
           </svg>
         )}
-
-        {/* Badge for unread notifications */}
-        {unreadCount > 0 && (
-          <span className={badgeClasses}>
-            {unreadCount > 9 ? '9+' : unreadCount}
-          </span>
-        )}
       </button>
+
+      {unreadCount > 0 && (
+        <span className={badgeClasses}>
+          {unreadCount < 10 ? unreadCount : '9+'}
+        </span>
+      )}
     </div>
   );
 };

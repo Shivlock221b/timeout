@@ -10,7 +10,7 @@ const Footer = () => {
           <div>
             <h3 className="text-xl font-bold mb-4">Tymout</h3>
             <p className="text-gray-300">
-              Connecting people through meaningful real-life interactions.
+              Your Next Adventure Starts Here
             </p>
           </div>
           

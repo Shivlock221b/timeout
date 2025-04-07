@@ -1,47 +1,80 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { getS3ImageUrl } from '../../utils/s3Utils';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
-// Following Single Responsibility Principle - Hero only handles the hero section display
+// Hero component following Single Responsibility Principle
 const Hero = () => {
+  // Get the hero image URL from S3
+  const heroImageUrl = getS3ImageUrl('home/hero-image.jpg');
+  const { isAuthenticated } = useAuth();
+  
+  useEffect(() => {
+    // This script runs after component mount and ensures there's no gap
+    const heroElement = document.querySelector('.hero-section');
+    const headerElement = document.querySelector('header');
+    
+    if (heroElement && headerElement) {
+      // Force the hero to be positioned directly below the header
+      const headerHeight = headerElement.getBoundingClientRect().height;
+      const headerBottom = headerElement.getBoundingClientRect().bottom;
+      
+      // Apply adjustments after a brief delay to ensure accurate measurements
+      setTimeout(() => {
+        heroElement.style.marginTop = `-100px`;
+      }, 0);
+    }
+  }, []);
+
   return (
-    <section className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-20">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row items-center">
-          <div className="md:w-1/2 mb-10 md:mb-0">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Connect with people who share your interests
-            </h1>
-            <p className="text-xl mb-8">
-              Join tables, meet new people, and create meaningful connections in real life.
+    <div 
+      className="hero-section w-full min-h-[800px] sm:min-h-[500px] relative"
+      style={{ 
+        marginLeft: 'calc(-50vw + 50%)',
+        marginRight: 'calc(-50vw + 50%)',
+        width: '100vw',
+        maxWidth: '100vw',
+        marginTop: '-100px', // Extremely aggressive negative margin
+        backgroundImage: `url(${heroImageUrl})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center center',
+        backgroundRepeat: 'no-repeat',
+        filter: 'brightness(1.2)' // Increase brightness of background image
+      }}
+    >
+      <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
+        <div className="px-6 md:px-12 max-w-4xl z-10 w-full">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold mb-4 text-white leading-tight tracking-tight text-center">
+            <span className="block bg-clip-text text-transparent bg-gradient-to-r from-white to-indigo-200">
+              Take a Tymout
+            </span>
+          </h1>
+          
+          <div className="mt-6 mb-8 ml-0 mr-auto max-w-2xl">
+            <p className="text-xl md:text-2xl text-white leading-relaxed italic font-light text-left">
+              <span className="text-indigo-700 font-bold">Small, local events</span> to connect with 
+              <span className="text-indigo-700 font-bold"> like&#8209;minded people</span> and 
+              <span className="text-indigo-700 font-bold"> rediscover your city</span>.
             </p>
-            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-              <Link
-                to="/discover"
-                className="bg-white text-indigo-600 hover:bg-indigo-50 px-6 py-3 rounded-lg font-semibold text-center"
-              >
-                Find a Table
-              </Link>
-              <Link
-                to="/create"
-                className="bg-transparent border-2 border-white hover:bg-white hover:text-indigo-600 px-6 py-3 rounded-lg font-semibold text-center transition-colors"
-              >
-                Host a Table
-              </Link>
-            </div>
           </div>
-          <div className="md:w-1/2">
-            <div className="relative">
-              {/* This would be an actual image in production */}
-              <div className="bg-indigo-300 bg-opacity-30 rounded-lg p-6 h-80 flex items-center justify-center">
-                <p className="text-center text-lg font-medium">
-                  [Hero image showing people connecting at a table]
-                </p>
-              </div>
-            </div>
+          
+          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
+            <Link
+              to={isAuthenticated ? "/discover" : "/login"}
+              className="px-8 py-4 bg-white text-indigo-700 rounded-full text-lg font-bold transform hover:scale-105 transition duration-300 shadow-lg"
+            >
+              Find a Table
+            </Link>
+            <Link
+              to={isAuthenticated ? "/create" : "/login"}
+              className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-full text-lg font-bold hover:bg-white hover:text-indigo-700 transform hover:scale-105 transition duration-300"
+            >
+              Host a Table
+            </Link>
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

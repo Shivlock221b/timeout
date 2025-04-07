@@ -38,12 +38,6 @@ const AppContent = () => {
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/auth/success" element={<AuthSuccess />} />
             
-            {/* Legacy route redirects */}
-            <Route path="/dashboard" element={<ProtectedRoute><Navigate to="/onlyforyou" replace /></ProtectedRoute>} />
-            <Route path="/tables" element={<ProtectedRoute><Navigate to="/onlyforyou" replace /></ProtectedRoute>} />
-            <Route path="/circles" element={<ProtectedRoute><Navigate to="/explore" replace /></ProtectedRoute>} />
-            <Route path="/messages" element={<ProtectedRoute><Navigate to="/message" replace /></ProtectedRoute>} />
-            
             {/* Main navigation routes */}
             <Route 
               path="/onlyforyou" 

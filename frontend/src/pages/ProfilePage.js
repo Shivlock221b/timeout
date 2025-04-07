@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useProfile } from '../context/ProfileContext';
+import { useNavigate } from 'react-router-dom';
 import UserDetails from '../components/profile/UserDetails';
 import UserInterests from '../components/profile/UserInterests';
 import ProfileCompleteness from '../components/profile/ProfileCompleteness';
@@ -12,10 +13,11 @@ import ProfileAvatar from '../components/profile/ProfileAvatar';
 const ProfilePage = () => {
   const { isAuthenticated, logout } = useAuth();
   const { profile, loading, error, refreshProfile } = useProfile();
+  const navigate = useNavigate();
   
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="p-8 bg-white shadow-md rounded-lg">
           <h2 className="text-2xl font-bold mb-4 text-center">Loading Profile...</h2>
           <div className="flex justify-center">
@@ -28,7 +30,7 @@ const ProfilePage = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="p-8 bg-white shadow-md rounded-lg">
           <h2 className="text-2xl font-bold mb-4 text-center text-red-500">{error}</h2>
           <div className="flex justify-center mt-4">
@@ -47,26 +49,21 @@ const ProfilePage = () => {
   const handleLogout = () => {
     if (window.confirm('Are you sure you want to sign out?')) {
       logout();
+      navigate('/'); // Redirect to home page after logout
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-6 py-6 sm:px-2">
-          <div className="bg-white shadow overflow-hidden sm:rounded-lg p-2">
-            <div className="px-4 py-5 sm:px-6 flex justify-between items-center">
-              <div>
-                <h3 className="text-lg leading-6 font-medium text-gray-900">Profile Information</h3>
-                <p className="mt-1 max-w-2xl text-sm text-gray-500">Personal details and preferences</p>
-              </div>
-            </div>
-            
+    <div className="min-h-screen bg-white">
+      <div className="max-w-7xl mx-auto py-4 sm:px-6 lg:px-8">
+        <div className="px-4 py-4 sm:px-2">
+          <div className="bg-white shadow overflow-hidden sm:rounded-lg">
             {profile && (
-              <div className="border-t border-gray-200">
+              <div>
                 <ProfileAvatar 
                   avatar={profile.avatar} 
                   name={profile.name} 
+                  email={profile.email}
                 />
                 
                 <ProfileCompleteness completeness={profile.completeness} />
