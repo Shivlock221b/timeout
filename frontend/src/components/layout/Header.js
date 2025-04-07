@@ -97,26 +97,8 @@ const Header = () => {
                 <span className="text-xs mt-1">Host</span>
               </Link>
             ) : (
-              <>
-                <Link 
-                  to="/login" 
-                  className={`transition-all duration-300 hover:opacity-80 ${
-                    isScrolled ? 'text-indigo-600' : 'text-white'
-                  }`}
-                >
-                  Login
-                </Link>
-                <Link 
-                  to="/signup" 
-                  className={`px-4 py-2 rounded-md transition-all duration-300 ${
-                    isScrolled 
-                      ? 'bg-indigo-600 text-white hover:bg-indigo-700' 
-                      : 'bg-white text-indigo-600 hover:bg-indigo-100'
-                  }`}
-                >
-                  Sign Up
-                </Link>
-              </>
+              // Empty div to maintain layout balance when not authenticated
+              <div></div>
             )}
           </div>
         </div>
