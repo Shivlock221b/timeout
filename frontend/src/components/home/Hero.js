@@ -28,7 +28,7 @@ const Hero = () => {
 
   return (
     <div 
-      className="hero-section relative w-screen left-[50%] right-[50%] -ml-[50vw] -mr-[50vw] min-h-[800px] sm:min-h-[500px]"
+      className="hero-section relative w-screen left-[50%] right-[50%] -ml-[50vw] -mr-[50vw] min-h-[800px] sm:min-h-[500px] rounded-b-[2.5rem] overflow-hidden"
       style={{ 
         backgroundImage: `url(${heroImageUrl})`,
         backgroundSize: 'cover',
@@ -38,16 +38,16 @@ const Hero = () => {
         marginTop: '-100px'
       }}
     >
-      <div className="absolute inset-0 bg-black bg-opacity-5 flex items-center justify-center">
-        <div className="container mx-auto px-6 md:px-12 max-w-4xl z-10">
+      <div className="absolute inset-0 bg-black bg-opacity-5 flex items-center justify-center p-8">
+        <div className="container mx-auto px-8 max-w-4xl z-10">
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold mb-4 text-white leading-tight tracking-tight text-center">
             <span className="block bg-clip-text text-transparent bg-gradient-to-r from-white to-indigo-200">
-              Take a Tymo
+              Take a Tymout
             </span>
           </h1>
           
           <div className="mt-6 mb-8 ml-0 mr-auto max-w-2xl">
-            <p className="text-xl md:text-2xl text-white leading-relaxed italic font-light text-left bg-black/10 backdrop-blur-sm rounded-lg px-6 py-4">
+            <p className="text-xl md:text-2xl text-white leading-relaxed italic font-light text-left bg-black/10 backdrop-blur-sm rounded-2xl px-8 py-6">
               <span className="text-indigo-700 font-bold text-3xl md:text-4xl">Small, local events</span> to connect with 
               <span className="text-indigo-700 font-bold text-3xl md:text-4xl"> like&#8209;minded people</span> and rediscover 
               <span className="text-indigo-700 font-bold text-3xl md:text-4xl"> your city.</span>
@@ -57,13 +57,13 @@ const Hero = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 mt-12">
             <Link
               to={isAuthenticated ? "/discover" : "/login"}
-              className="px-8 py-4 bg-white text-indigo-700 rounded-full text-lg font-bold transform hover:scale-105 transition duration-300 shadow-lg"
+              className="px-10 py-5 bg-white text-indigo-700 rounded-full text-lg font-bold transform hover:scale-105 transition duration-300 shadow-lg"
             >
               Find a Table
             </Link>
             <Link
               to={isAuthenticated ? "/create" : "/login"}
-              className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-full text-lg font-bold hover:bg-white hover:text-indigo-700 transform hover:scale-105 transition duration-300"
+              className="px-10 py-5 bg-transparent border-2 border-white text-white rounded-full text-lg font-bold hover:bg-white hover:text-indigo-700 transform hover:scale-105 transition duration-300"
             >
               Host a Table
             </Link>
