@@ -1,0 +1,179 @@
+/* HomePage.css - Styles for the image carousel homepage */
+
+/* Hide footer on homepage but keep header */
+body.homepage-active footer,
+body.homepage-active nav {
+  display: none !important;
+}
+
+/* Keep header visible */
+body.homepage-active header {
+  display: block !important;
+}
+
+/* Always make header glassy on homepage */
+body.homepage-header-glassy .fixed[class*="bg-indigo-600"] {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+  backdrop-filter: blur(8px) !important;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
+
+/* Override text colors for the glassy header - use app scheme blue */
+body.homepage-header-glassy header .text-white {
+  color: #4f46e5 !important; /* Indigo-600 color from Tailwind */
+}
+
+/* Make the TM superscript blue too */
+body.homepage-header-glassy header span[class*="text-white"] {
+  color: #4f46e5 !important;
+}
+
+/* Make login text blue */
+body.homepage-header-glassy header a[href="/login"] {
+  color: #4f46e5 !important;
+  font-weight: 600;
+}
+
+/* Invert the signup button colors */
+body.homepage-header-glassy header a[href="/signup"] {
+  background-color: #4f46e5 !important;
+  color: white !important;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+}
+
+body.homepage-header-glassy header a[href="/signup"]:hover {
+  background-color: #4338ca !important; /* Indigo-700 for hover state */
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+body.homepage-header-glassy header .bg-indigo-500 {
+  background-color: rgba(99, 102, 241, 0.8) !important;
+}
+
+/* Override any padding or margins that might affect full-screen display */
+body.homepage-active {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Hide any other layout elements */
+body.homepage-active .pt-16,
+body.homepage-active .md-pt-20,
+body.homepage-active .flex-1 {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Make the homepage container take the entire viewport on mobile but contained on desktop */
+.homepage-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background-color: #000;
+  z-index: 10; /* Lower z-index so header stays above */
+}
+
+/* Image carousel container - full screen on mobile */
+.image-carousel-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background-color: transparent; /* Remove background color */
+}
+
+/* Responsive container for desktop */
+@media (min-width: 1024px) {
+  .homepage-fullscreen {
+    position: static;
+    width: 100%;
+    height: calc(100vh - 72px); /* Subtract header height */
+    padding-top: 72px; /* Add padding for header */
+    background-color: #f3f4f6; /* Light gray background */
+  }
+  
+  .image-carousel-container {
+    width: 75%;
+    max-width: 1200px;
+    height: 80%;
+    margin: 0 auto;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+}
+
+/* Full-screen image carousel */
+.image-carousel-fullscreen {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background-color: transparent; /* Remove background color */
+}
+
+@media (min-width: 1024px) {
+  .image-carousel-fullscreen {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+}
+
+/* Make the image cover the entire screen on mobile, contained on desktop */
+.hero-image-fullscreen {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: opacity 1s ease-in-out;
+}
+
+/* Loading container */
+.loading-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 1.5rem;
+  background-color: #000;
+}
+
+@media (min-width: 1024px) {
+  .loading-container {
+    color: #4f46e5;
+    background-color: transparent;
+  }
+}
+
+/* No images message */
+.no-images {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 1.5rem;
+  background-color: #000;
+}
+
+@media (min-width: 1024px) {
+  .no-images {
+    color: #4f46e5;
+    background-color: transparent;
+  }
+}
