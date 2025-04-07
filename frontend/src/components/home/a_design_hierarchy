@@ -1,0 +1,17 @@
+   HomePage.js
+   ├── Hero.js (Most complex styling)
+   │   ├── Custom background image handling
+   │   ├── Complex positioning logic
+   │   └── Responsive text and button styles
+   │
+   ├── HowItWorks.js
+   │   ├── Grid layout system
+   │   └── Icon and card styling
+   │
+   ├── Testimonials.js
+   │   ├── Card layout
+   │   └── Grid system
+   │
+   └── CallToAction.js
+       ├── Gradient backgrounds
+       └── Button animations

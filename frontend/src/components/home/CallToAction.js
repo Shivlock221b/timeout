@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 // Following Single Responsibility Principle - CallToAction only handles the CTA section
 const CallToAction = () => {
   return (
-    <section className="py-20 bg-gradient-to-br from-indigo-600 via-indigo-500 to-indigo-700 text-white relative overflow-hidden rounded-3xl mx-4 my-12">
+    <section className="py-20 bg-gradient-to-br from-indigo-600 via-indigo-500 to-indigo-700 text-white relative overflow-hidden mx-auto my-12 max-w-[100vw]">
       {/* Abstract shapes for visual interest */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10">
         <div className="absolute -left-10 -top-10 bg-white rounded-full w-40 h-40 blur-xl"></div>

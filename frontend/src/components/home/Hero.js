@@ -28,18 +28,14 @@ const Hero = () => {
 
   return (
     <div 
-      className="hero-section w-full min-h-[800px] sm:min-h-[500px] relative"
+      className="hero-section relative w-full min-h-[800px] sm:min-h-[500px] max-w-[100vw] mx-auto"
       style={{ 
-        marginLeft: 'calc(-50vw + 50%)',
-        marginRight: 'calc(-50vw + 50%)',
-        width: '100vw',
-        maxWidth: '100vw',
-        marginTop: '-100px', // Extremely aggressive negative margin
         backgroundImage: `url(${heroImageUrl})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center center',
         backgroundRepeat: 'no-repeat',
-        filter: 'brightness(1.2)' // Increase brightness of background image
+        filter: 'brightness(1.2)',
+        marginTop: '-100px'
       }}
     >
       <div className="absolute inset-0 bg-black bg-opacity-5 flex items-center justify-center">

@@ -8,11 +8,13 @@ import { images } from '../data/images'; // Import mock data from separate file 
 // Following Single Responsibility Principle - HomePage only composes other components
 const HomePage = () => {
   return (
-    <div className="home-page" style={{ marginTop: '-8px' }}>
-      <Hero />
-      <HowItWorks />
-      <Testimonials />
-      <CallToAction />
+    <div className="min-h-screen bg-white overflow-x-hidden">
+      <div className="max-w-7xl mx-auto">
+        <Hero />
+        <HowItWorks />
+        <Testimonials />
+        <CallToAction />
+      </div>
     </div>
   );
 };
