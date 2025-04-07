@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
 
 // Following Single Responsibility Principle - this component only handles signup UI
 const SignupPage = () => {
@@ -29,7 +28,7 @@ const SignupPage = () => {
 
   // Handle Google signup
   const handleGoogleSignup = () => {
-    window.location.href = `${axios.defaults.baseURL}/api/users/auth/google`;
+    window.location.href = 'https://tymoutapi-gateway-production.up.railway.app/api/users/auth/google';
   };
 
   return (

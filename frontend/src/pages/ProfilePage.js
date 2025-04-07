@@ -1,60 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useProfile } from '../context/ProfileContext';
 import UserDetails from '../components/profile/UserDetails';
 import UserInterests from '../components/profile/UserInterests';
 import ProfileCompleteness from '../components/profile/ProfileCompleteness';
 import SocialLinks from '../components/profile/SocialLinks';
 import VerificationBadges from '../components/profile/VerificationBadges';
+import ProfileAvatar from '../components/profile/ProfileAvatar';
 
 // Following Single Responsibility Principle - this component only handles the profile page layout
 const ProfilePage = () => {
-  const { user, isAuthenticated, logout } = useAuth();
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { isAuthenticated, logout } = useAuth();
+  const { profile, loading, error, refreshProfile } = useProfile();
   
-  useEffect(() => {
-    // In a real application, this would fetch the profile data from the API
-    const fetchProfile = async () => {
-      try {
-        setLoading(true);
-        // Mock data for now - would be replaced with API call
-        setTimeout(() => {
-          setProfile({
-            ...user,
-            bio: 'Enthusiastic traveler and food lover',
-            location: 'Mumbai, India',
-            interests: ['hiking', 'photography', 'cooking', 'reading'],
-            social: {
-              instagram: 'user_insta',
-              twitter: 'user_twitter',
-              linkedin: 'user_linkedin'
-            },
-            verified: {
-              email: true,
-              phone: false
-            },
-            completeness: 75 // percentage
-          });
-          setLoading(false);
-        }, 1000);
-      } catch (err) {
-        setError('Failed to load profile data');
-        setLoading(false);
-      }
-    };
-
-    if (isAuthenticated) {
-      fetchProfile();
-    }
-  }, [isAuthenticated, user]);
-
-  const handleLogout = () => {
-    if (window.confirm('Are you sure you want to sign out?')) {
-      logout();
-    }
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -73,31 +31,44 @@ const ProfilePage = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="p-8 bg-white shadow-md rounded-lg">
           <h2 className="text-2xl font-bold mb-4 text-center text-red-500">{error}</h2>
+          <div className="flex justify-center mt-4">
+            <button 
+              onClick={refreshProfile}
+              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+            >
+              Try Again
+            </button>
+          </div>
         </div>
       </div>
     );
   }
 
+  const handleLogout = () => {
+    if (window.confirm('Are you sure you want to sign out?')) {
+      logout();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div className="px-6 py-6 sm:px-2">
+          <div className="bg-white shadow overflow-hidden sm:rounded-lg p-2">
             <div className="px-4 py-5 sm:px-6 flex justify-between items-center">
               <div>
                 <h3 className="text-lg leading-6 font-medium text-gray-900">Profile Information</h3>
                 <p className="mt-1 max-w-2xl text-sm text-gray-500">Personal details and preferences</p>
               </div>
-              <button 
-                className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
-                onClick={() => window.location.href = '/settings'}
-              >
-                Edit Profile
-              </button>
             </div>
             
             {profile && (
               <div className="border-t border-gray-200">
+                <ProfileAvatar 
+                  avatar={profile.avatar} 
+                  name={profile.name} 
+                />
+                
                 <ProfileCompleteness completeness={profile.completeness} />
                 
                 <UserDetails 
@@ -113,9 +84,15 @@ const ProfilePage = () => {
                 
                 <SocialLinks social={profile.social} />
                 
-                {/* Sign Out Button */}
+                {/* Action Buttons */}
                 <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
-                  <div className="flex justify-center">
+                  <div className="flex justify-center space-x-4">
+                    <button
+                      onClick={() => window.location.href = '/settings'}
+                      className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    >
+                      Edit Profile
+                    </button>
                     <button
                       onClick={handleLogout}
                       className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

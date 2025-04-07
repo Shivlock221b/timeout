@@ -73,7 +73,7 @@ const ProfileSettings = ({ user }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="overflow-x-hidden">
       {successMessage && (
         <div className="mb-4 p-2 bg-green-100 text-green-700 rounded">
           {successMessage}
@@ -86,8 +86,8 @@ const ProfileSettings = ({ user }) => {
           <h3 className="text-lg font-medium text-gray-900">Personal Information</h3>
           <p className="mt-1 text-sm text-gray-500">Update your basic profile information.</p>
           
-          <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-            <div className="sm:col-span-4">
+          <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-2 sm:gap-x-4 sm:grid-cols-6">
+            <div className="col-span-1 sm:col-span-4">
               <label htmlFor="name" className="block text-sm font-medium text-gray-700">
                 Full name
               </label>
@@ -103,7 +103,7 @@ const ProfileSettings = ({ user }) => {
               </div>
             </div>
 
-            <div className="sm:col-span-6">
+            <div className="col-span-1 sm:col-span-6">
               <label htmlFor="bio" className="block text-sm font-medium text-gray-700">
                 Bio
               </label>
@@ -121,7 +121,7 @@ const ProfileSettings = ({ user }) => {
               <p className="mt-2 text-sm text-gray-500">Brief description for your profile.</p>
             </div>
 
-            <div className="sm:col-span-4">
+            <div className="col-span-1 sm:col-span-4">
               <label htmlFor="location" className="block text-sm font-medium text-gray-700">
                 Location
               </label>
@@ -145,7 +145,7 @@ const ProfileSettings = ({ user }) => {
           <h3 className="text-lg font-medium text-gray-900">Interests</h3>
           <p className="mt-1 text-sm text-gray-500">Select interests to help us find matches for you.</p>
           
-          <div className="mt-2">
+          <div className="mt-2 max-w-full overflow-hidden">
             <div className="flex flex-wrap gap-2 mb-4">
               {formData.interests.map((interest, index) => (
                 <span 
@@ -166,8 +166,8 @@ const ProfileSettings = ({ user }) => {
               ))}
             </div>
             
-            <div className="flex">
-              <div className="flex-grow">
+            <div className="flex flex-col sm:flex-row">
+              <div className="flex-grow mb-2 sm:mb-0">
                 <select
                   value={newInterest}
                   onChange={(e) => setNewInterest(e.target.value)}
@@ -186,7 +186,7 @@ const ProfileSettings = ({ user }) => {
               <button
                 type="button"
                 onClick={addInterest}
-                className="ml-2 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="sm:ml-2 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 Add
               </button>

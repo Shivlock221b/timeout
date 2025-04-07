@@ -86,29 +86,31 @@ passport.use(
             console.log('User information updated');
           }
           return done(null, user);
+        } else {
+          console.log('Creating new user in MongoDB...');
+          // Create new user
+          const newUser = new User({
+            googleId: profile.id,
+            name: profile.displayName,
+            email: profile.emails[0].value,
+            profilePicture: profile.photos[0].value,
+            verified: true // Google accounts are pre-verified
+          });
+
+          // Save the new user
+          await newUser.save();
+          console.log('New user created:', newUser.id);
+          console.log('User details:', {
+            id: newUser.id,
+            googleId: newUser.googleId,
+            name: newUser.name,
+            email: newUser.email
+          });
+
+          return done(null, newUser);
         }
 
-        console.log('Creating new user in MongoDB...');
-        // Create new user
-        const newUser = new User({
-          googleId: profile.id,
-          name: profile.displayName,
-          email: profile.emails[0].value,
-          profilePicture: profile.photos[0].value,
-          verified: true // Google accounts are pre-verified
-        });
-
-        // Save the new user
-        await newUser.save();
-        console.log('New user created:', newUser.id);
-        console.log('User details:', {
-          id: newUser.id,
-          googleId: newUser.googleId,
-          name: newUser.name,
-          email: newUser.email
-        });
-
-        return done(null, newUser);
+        
       } catch (err) {
         console.error('Error in Google strategy:', err);
         return done(err, null);

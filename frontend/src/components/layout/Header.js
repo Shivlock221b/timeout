@@ -3,16 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import NotificationButton from '../notifications/NotificationButton';
 import timeoutLogo from '../../assets/icons/timeout_logo.png';
+import { FaPlus } from 'react-icons/fa';
 
 // Following Single Responsibility Principle - Header only handles navigation
 const Header = () => {
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-
-  // Navigate to profile page
-  const handleProfileClick = () => {
-    navigate('/profile');
-  };
 
   // Handle logo click based on authentication status
   const handleLogoClick = (e) => {
@@ -41,21 +37,19 @@ const Header = () => {
           {isAuthenticated && <NotificationButton logoSrc={timeoutLogo} size="large" />}
         </div>
         
-        {/* Right side - User controls */}
+        {/* Right side - Host button or Login/Signup */}
         <div className="flex items-center space-x-4">
           {isAuthenticated ? (
-            <button 
-              onClick={handleProfileClick}
-              className="flex items-center space-x-2 focus:outline-none hover:opacity-80 transition-opacity"
-              aria-label="Profile"
+            <Link 
+              to="/host"
+              className="flex flex-col items-center focus:outline-none hover:opacity-80 transition-opacity"
+              aria-label="Host"
             >
-              <img 
-                src={user?.profilePicture || "https://via.placeholder.com/40"} 
-                alt="Profile" 
-                className="w-8 h-8 rounded-full object-cover border-2 border-white"
-              />
-              <span className="hidden md:inline">{user?.name || 'User'}</span>
-            </button>
+              <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center">
+                <FaPlus className="text-white" />
+              </div>
+              <span className="text-xs mt-1">Host</span>
+            </Link>
           ) : (
             <>
               <Link to="/login" className="hover:text-indigo-200">Login</Link>

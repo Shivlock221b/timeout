@@ -32,8 +32,68 @@
   - Method: `POST /api/events/recurring`  
   - Purpose: Create recurring events based on the specified pattern.
 
+- **src/components/settings/AccountSettings.js**  
+  - Function: `handleUpdateEmail()`  
+  - Method: `PUT /api/users/email`  
+  - Purpose: Update the user's email address.
+
+- **src/components/settings/AccountSettings.js**  
+  - Function: `handleUpdatePassword()`  
+  - Method: `PUT /api/users/password`  
+  - Purpose: Update the user's password.
+
+- **src/components/settings/AvatarManager.js**  
+  - Function: `handleSaveCrop()`  
+  - Method: `PUT /api/users/avatar`  
+  - Purpose: Upload and update the user's profile photo.
+
+- **src/components/settings/AvatarManager.js**  
+  - Function: `handleRemoveAvatar()`  
+  - Method: `DELETE /api/users/avatar`  
+  - Purpose: Remove the user's profile photo.
+
+- **src/components/settings/NotificationPreferences.js**  
+  - Function: `handleSubmit()`  
+  - Method: `PUT /api/users/notification-preferences`  
+  - Purpose: Update notification preferences for email and in-app notifications.
+
+- **src/components/settings/PrivacySettings.js**  
+  - Function: `handleSubmit()`  
+  - Method: `PUT /api/users/privacy-settings`  
+  - Purpose: Update privacy settings including profile visibility and location sharing.
+
+- **src/components/settings/ProfileSettings.js**  
+  - Function: `handleSubmit()`  
+  - Method: `PUT /api/users/profile`  
+  - Purpose: Update user profile information including name, bio, location, and interests.
+
+- **src/components/notifications/NotificationButton.js**  
+  - Component: `NotificationButton`  
+  - Method: No direct API calls, consumes data from NotificationsContext  
+  - Purpose: Display notification count and navigate to notifications page.
+
+- **src/components/notifications/NotificationItem.js**  
+  - Function: `handleClick()`  
+  - Method: Consumes `markAsRead()` from NotificationsContext  
+  - Purpose: Mark a notification as read when clicked.
+
+- **src/components/notifications/NotificationPanel.js**  
+  - Component: `NotificationPanel`  
+  - Method: Consumes notifications data and `markAllAsRead()` from NotificationsContext  
+  - Purpose: Display notifications in a dropdown panel and provide option to mark all as read.
+
+- **src/context/AuthContext.js**  
+  - Function: `loadUser()` within `useEffect`  
+  - Method: `GET /api/users/user/current`  
+  - Purpose: Load authenticated user data on application startup using token from local storage.
+
+- **src/context/AuthContext.js**  
+  - Function: `loadUserAfterAuth()` within `handleAuthSuccess`  
+  - Method: `GET /api/users/user/current`  
+  - Purpose: Fetch user data immediately after successful authentication.
+
 - **src/context/NotificationsContext.js**  
-  - Function: `useEffect()` hook in `NotificationsProvider` 
+  - Function: `fetchNotifications()` within `useEffect`  
   - Method: `GET /api/notifications`  
   - Purpose: Fetch user notifications on component mount.
 
@@ -46,6 +106,36 @@
   - Function: `markAllAsRead()`  
   - Method: `PUT /api/notifications/read-all`  
   - Purpose: Mark all notifications as read.
+
+- **src/context/NotificationsContext.js**  
+  - Function: `addNotification()`  
+  - Method: Will be used with WebSockets (future implementation)  
+  - Purpose: Add a new real-time notification to the user's notification list.
+
+- **src/context/ProfileContext.js**  
+  - Function: `fetchProfileData()`  
+  - Method: `GET /api/users/profile`  
+  - Purpose: Fetch user profile data with caching mechanism.
+
+- **src/pages/DashboardPage.js**  
+  - Function: `useEffect()` hook
+  - Method: Uses AuthContext to verify authentication status
+  - Purpose: Check if user is authenticated and redirect accordingly.
+
+- **src/pages/ProfilePage.js**  
+  - Function: Uses `useProfile()` hook
+  - Method: Consumes ProfileContext to display user profile data
+  - Purpose: Display and manage profile information.
+
+- **src/pages/NotificationsPage.js**  
+  - Function: `fetchNotifications()` within `useEffect`
+  - Method: `GET /api/notifications`
+  - Purpose: Fetch user notifications and display them.
+
+- **src/pages/SettingsPage.js**  
+  - Component: Renders settings components based on active tab
+  - Method: No direct API calls, delegates to child components
+  - Purpose: Organize and display different settings sections.
 
 ## Application Architecture
 

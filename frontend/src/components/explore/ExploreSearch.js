@@ -1,51 +1,37 @@
-import React, { useState } from 'react';
-import { FaSearch } from 'react-icons/fa';
+import React from 'react';
 
-// Single Responsibility Principle: This component only handles search input
+/**
+ * ExploreSearch Component
+ * 
+ * Following Single Responsibility Principle:
+ * - This component only handles the search functionality
+ */
 const ExploreSearch = ({ query, onSearch }) => {
-  const [inputValue, setInputValue] = useState(query);
-
-  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSearch(inputValue.trim());
-  };
-
-  // Handle input change
-  const handleChange = (e) => {
-    setInputValue(e.target.value);
-  };
-
-  // Handle key press - search on Enter
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      onSearch(inputValue.trim());
-    }
+    onSearch(e.target.search.value);
   };
 
   return (
-    <div className="flex items-center justify-between">
-      <div className="relative w-full">
-        <form onSubmit={handleSubmit} className="w-full">
-          <input
-            type="text"
-            value={inputValue}
-            onChange={handleChange}
-            onKeyPress={handleKeyPress}
-            placeholder="Search activities, events, or interests..."
-            className="w-full border border-gray-300 rounded-lg py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-            aria-label="Search explore"
-          />
-          <button
-            type="submit"
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-            aria-label="Submit search"
-          >
-            <FaSearch className="h-5 w-5" />
-          </button>
-        </form>
+    <form onSubmit={handleSubmit}>
+      <div className="relative">
+        <input
+          type="text"
+          name="search"
+          placeholder="Search tables, events, or circles..."
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+          defaultValue={query}
+        />
+        <button
+          type="submit"
+          className="absolute right-2 top-2 bg-indigo-600 text-white p-1 rounded-md"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </button>
       </div>
-    </div>
+    </form>
   );
 };
 

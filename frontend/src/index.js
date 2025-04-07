@@ -6,7 +6,7 @@ import './styles/index.css';
 import App from './App';
 
 // Set up axios defaults for API requests
-axios.defaults.baseURL = 'https://tymoutapi-gateway-production.up.railway.app'; // API Gateway URL
+axios.defaults.baseURL = 'https://tymoutapi-gateway-production.up.railway.app'; // API Gateway URL is on port 3000
 axios.defaults.withCredentials = true; // Enable cookies for cross-origin requests
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

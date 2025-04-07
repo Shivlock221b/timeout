@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import ProfileSettings from '../components/settings/ProfileSettings';
-import AvatarManager from '../components/settings/AvatarManager';
 import AccountSettings from '../components/settings/AccountSettings';
 import PrivacySettings from '../components/settings/PrivacySettings';
 import NotificationPreferences from '../components/settings/NotificationPreferences';
@@ -14,7 +13,6 @@ const SettingsPage = () => {
   // Tabs configuration following Open/Closed principle - new tabs can be added without modifying existing code
   const tabs = [
     { id: 'profile', label: 'Profile' },
-    { id: 'avatar', label: 'Avatar' },
     { id: 'account', label: 'Account' },
     { id: 'privacy', label: 'Privacy' },
     { id: 'notifications', label: 'Notifications' }
@@ -26,8 +24,6 @@ const SettingsPage = () => {
     switch (activeTab) {
       case 'profile':
         return <ProfileSettings user={user} />;
-      case 'avatar':
-        return <AvatarManager user={user} />;
       case 'account':
         return <AccountSettings user={user} />;
       case 'privacy':
@@ -40,9 +36,9 @@ const SettingsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
+    <div className="min-h-screen bg-gray-100 overflow-x-hidden">
+      <div className="max-w-7xl mx-auto py-6 px-2 sm:px-6 lg:px-8">
+        <div className="px-2 py-6 sm:px-0">
           <div className="bg-white shadow sm:rounded-lg">
             <div className="px-4 py-5 sm:px-6">
               <h2 className="text-lg font-medium text-gray-900">Settings</h2>
@@ -50,11 +46,11 @@ const SettingsPage = () => {
             </div>
             
             <div className="border-t border-gray-200">
-              <div className="flex border-b">
+              <div className="flex flex-wrap border-b">
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
-                    className={`px-4 py-4 text-sm font-medium ${
+                    className={`px-3 py-3 sm:px-4 sm:py-4 text-xs sm:text-sm font-medium whitespace-nowrap ${
                       activeTab === tab.id
                         ? 'border-b-2 border-indigo-500 text-indigo-600'
                         : 'text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -66,7 +62,7 @@ const SettingsPage = () => {
                 ))}
               </div>
               
-              <div className="p-4">
+              <div className="p-2 sm:p-4">
                 {renderTabContent()}
               </div>
             </div>
