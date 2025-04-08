@@ -15,12 +15,12 @@ const CategoryFilter = ({ categories, activeCategory, onCategoryChange }) => {
   ];
 
   return (
-    <div className="flex space-x-2 min-w-max pb-1">
+    <div className="category-filter-wrapper">
       {allCategories.map(category => (
         <button
           key={category.id}
           onClick={() => onCategoryChange(category.id)}
-          className={`flex items-center px-4 py-2 rounded-full transition-colors duration-200 whitespace-nowrap
+          className={`flex items-center px-4 py-2 rounded-full transition-colors duration-200 whitespace-nowrap mx-1 first:ml-0
             ${activeCategory === category.id 
               ? 'bg-indigo-600 text-white' 
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}

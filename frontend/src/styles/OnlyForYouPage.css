@@ -3,6 +3,34 @@
  * Following Single Responsibility Principle - this file only contains OnlyForYou page styles
  */
 
+/* Main page container styles */
+.container {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Category scroll container with horizontal scrolling only */
+.category-scroll-container {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  padding-bottom: 4px; /* Add some padding to avoid cut-off shadows */
+}
+
+.category-scroll-container::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
+/* Category filter wrapper styles */
+.category-filter-wrapper {
+  display: flex;
+  min-width: max-content;
+  padding: 2px 0;
+}
+
 /* Hide scrollbar for category filters but allow scrolling */
 .hide-scrollbar {
   -ms-overflow-style: none;  /* IE and Edge */
