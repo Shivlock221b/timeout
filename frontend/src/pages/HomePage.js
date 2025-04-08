@@ -8,8 +8,8 @@ const HomePage = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [preloadedImages, setPreloadedImages] = useState({});
-  const preloadQueue = useRef([]);
-  const preloadingActive = useRef(false);
+  // Simplified preloading approach - remove complex queue management
+  const preloadedCount = useRef(0);
 
   // Only hide footer when this component mounts, keep header visible
   useEffect(() => {
@@ -32,27 +32,34 @@ const HomePage = () => {
       try {
         setLoading(true);
         
-        // Prepare direct image URLs for hero0 through hero20 using the correct format
+        // Prepare direct image URLs for hero0 through hero6 using the correct format
         const bucketName = process.env.REACT_APP_BUCKET_NAME || 'tymouttest';
         const region = process.env.REACT_APP_AWS_REGION || 'ap-south1'; 
         const folder = 'home'; 
         
         const imageUrls = [];
-        // Updated to fetch all 21 images (hero0 through hero20)
-        for (let i = 0; i <= 22; i++) {
+        // Updated to fetch 7 images (hero0 through hero6)
+        for (let i = 0; i <= 6; i++) {
           // Construct the direct URL exactly matching the format from the example
           const url = `https://${bucketName}.s3.${region}.amazonaws.com/${folder}/hero${i}.jpg`;
           imageUrls.push(url);
         }
         
         setImages(imageUrls);
-        // Start preloading immediately after we have URLs
-        preloadQueue.current = [...imageUrls];
-        preloadImagesInQueue();
-        // Don't set loading to false yet until at least first image is loaded
-        preloadImage(imageUrls[0]).then(() => {
+        
+        // Simplified preloading - load first image, then preload the rest in background
+        if (imageUrls.length > 0) {
+          preloadImage(imageUrls[0]).then(() => {
+            setLoading(false);
+            // Preload remaining images in background
+            imageUrls.slice(1).forEach(url => preloadImage(url));
+          }).catch(() => {
+            // If first image fails, still show the carousel
+            setLoading(false);
+          });
+        } else {
           setLoading(false);
-        });
+        }
       } catch (error) {
         console.error('Error preparing image URLs:', error);
         setLoading(false);
@@ -61,23 +68,20 @@ const HomePage = () => {
 
     fetchImages();
 
-    // Set interval to change image more rapidly - changed from 5000ms to 2500ms
+    // Set interval to change image
     const intervalId = setInterval(() => {
       setCurrentImageIndex(prevIndex => {
         if (images.length === 0) return 0;
-        // Preload next batch of images in sequence
         const nextIndex = (prevIndex + 1) % images.length;
-        // Preload a few images ahead of current one
-        preloadNextImages(nextIndex, 3);
         return nextIndex;
       });
-    }, 1000); // Change image every 1 seconds for more rapid transitions
+    }, 1500); // Change image every 1.5 seconds for transitions
 
     // Clean up interval on component unmount
     return () => clearInterval(intervalId);
   }, [images.length]);
 
-  // Function to preload individual image
+  // Simplified preloading function
   const preloadImage = (src) => {
     return new Promise((resolve, reject) => {
       if (preloadedImages[src]) {
@@ -89,58 +93,21 @@ const HomePage = () => {
       img.src = src;
       img.onload = () => {
         setPreloadedImages(prev => ({ ...prev, [src]: true }));
+        preloadedCount.current += 1;
         resolve(src);
       };
       img.onerror = () => {
         console.error(`Failed to preload image: ${src}`);
-        setPreloadedImages(prev => ({ ...prev, [src]: false }));
         reject(src);
       };
-    });
-  };
-
-  // Function to preload next N images from current index
-  const preloadNextImages = (startIndex, count) => {
-    const imagesToPreload = [];
-    for (let i = 0; i < count; i++) {
-      const index = (startIndex + i) % images.length;
-      if (images[index] && !preloadedImages[images[index]]) {
-        imagesToPreload.push(images[index]);
-      }
-    }
-    
-    if (imagesToPreload.length > 0) {
-      imagesToPreload.forEach(img => {
-        if (!preloadQueue.current.includes(img)) {
-          preloadQueue.current.push(img);
-        }
-      });
       
-      // Start preloading if not already active
-      if (!preloadingActive.current) {
-        preloadImagesInQueue();
-      }
-    }
-  };
-
-  // Function to process the preload queue
-  const preloadImagesInQueue = async () => {
-    if (preloadingActive.current || preloadQueue.current.length === 0) {
-      return;
-    }
-    
-    preloadingActive.current = true;
-    
-    while (preloadQueue.current.length > 0) {
-      const nextImage = preloadQueue.current.shift();
-      try {
-        await preloadImage(nextImage);
-      } catch (err) {
-        // Continue with next image if one fails
-      }
-    }
-    
-    preloadingActive.current = false;
+      // Add timeout to prevent hanging
+      setTimeout(() => {
+        if (!preloadedImages[src]) {
+          reject(src);
+        }
+      }, 5000);
+    });
   };
 
   return (
@@ -151,7 +118,7 @@ const HomePage = () => {
       <div className="homepage-fullscreen">
         {loading ? (
           <div className="loading-container">
-            <p>Loading images...</p>
+            {/* Loading state - intentionally empty for clean UI */}
           </div>
         ) : (
           <div className="image-carousel-container">
@@ -162,6 +129,7 @@ const HomePage = () => {
                     src={images[currentImageIndex]} 
                     alt={`Hero image ${currentImageIndex}`} 
                     className="hero-image-fullscreen"
+                    style={{ objectFit: 'cover', filter: 'none' }}
                     onError={(e) => {
                       console.log(`Failed to load image: ${images[currentImageIndex]}`);
                       // Prevent infinite error loop by removing the src
