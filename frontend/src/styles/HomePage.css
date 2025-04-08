@@ -2,7 +2,7 @@
 
 /* Hide footer on homepage but keep header */
 body.homepage-active footer,
-body.homepage-active nav {
+body.homepage-active .bottom-nav {
   display: none !important;
 }
 

@@ -12,6 +12,14 @@ import SettingsPage from './pages/SettingsPage';
 import HostPage from './pages/HostPage';
 import ExplorePage from './pages/ExplorePage';
 import NotificationsPage from './pages/NotificationsPage';
+import AboutPage from './pages/info/AboutPage';
+import FeaturesPage from './pages/info/FeaturesPage';
+import CreatorsPage from './pages/info/CreatorsPage';
+import BusinessPage from './pages/info/BusinessPage';
+import GuidelinesPage from './pages/info/GuidelinesPage';
+import FAQPage from './pages/info/FAQPage';
+import ContactPage from './pages/info/ContactPage';
+import PoliciesPage from './pages/info/PoliciesPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
@@ -37,6 +45,16 @@ const AppContent = () => {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/auth/success" element={<AuthSuccess />} />
+            
+            {/* Information pages - these do not require authentication */}
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/features" element={<FeaturesPage />} />
+            <Route path="/creators" element={<CreatorsPage />} />
+            <Route path="/business" element={<BusinessPage />} />
+            <Route path="/guidelines" element={<GuidelinesPage />} />
+            <Route path="/faq" element={<FAQPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/policies" element={<PoliciesPage />} />
             
             {/* Main navigation routes */}
             <Route 
