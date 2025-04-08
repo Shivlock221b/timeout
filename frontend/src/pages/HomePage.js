@@ -34,7 +34,7 @@ const HomePage = () => {
         
         // Prepare direct image URLs for hero0 through hero6 using the correct format
         const bucketName = process.env.REACT_APP_BUCKET_NAME || 'tymouttest';
-        const region = process.env.REACT_APP_AWS_REGION || 'ap-south1'; 
+        const region = process.env.REACT_APP_AWS_REGION || 'ap-south-1'; 
         const folder = 'home'; 
         
         const imageUrls = [];
@@ -79,7 +79,7 @@ const HomePage = () => {
 
     // Clean up interval on component unmount
     return () => clearInterval(intervalId);
-  }, [images.length]);
+  }, []);
 
   // Simplified preloading function
   const preloadImage = (src) => {
@@ -90,23 +90,30 @@ const HomePage = () => {
       }
 
       const img = new Image();
-      img.src = src;
+      
+      // Set timeout to prevent hanging
+      const timeoutId = setTimeout(() => {
+        if (!preloadedImages[src]) {
+          console.warn(`Preload timeout for image: ${src}`);
+          reject(src);
+        }
+      }, 5000);
+      
       img.onload = () => {
+        clearTimeout(timeoutId);
         setPreloadedImages(prev => ({ ...prev, [src]: true }));
         preloadedCount.current += 1;
         resolve(src);
       };
+      
       img.onerror = () => {
+        clearTimeout(timeoutId);
         console.error(`Failed to preload image: ${src}`);
         reject(src);
       };
       
-      // Add timeout to prevent hanging
-      setTimeout(() => {
-        if (!preloadedImages[src]) {
-          reject(src);
-        }
-      }, 5000);
+      // Set src after attaching event handlers to ensure they work properly
+      img.src = src;
     });
   };
 
