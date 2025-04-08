@@ -12,6 +12,7 @@ import SettingsPage from './pages/SettingsPage';
 import HostPage from './pages/HostPage';
 import ExplorePage from './pages/ExplorePage';
 import NotificationsPage from './pages/NotificationsPage';
+import OnlyForYouPage from './pages/OnlyForYouPage';
 import AboutPage from './pages/info/AboutPage';
 import FeaturesPage from './pages/info/FeaturesPage';
 import CreatorsPage from './pages/info/CreatorsPage';
@@ -61,10 +62,7 @@ const AppContent = () => {
               path="/onlyforyou" 
               element={
                 <ProtectedRoute>
-                  <div className="container mx-auto px-4 py-8">
-                    <h1 className="text-3xl font-bold mb-4">TymOut</h1>
-                    <p>Personalized content curated Only For You.</p>
-                  </div>
+                  <OnlyForYouPage />
                 </ProtectedRoute>
               } 
             />

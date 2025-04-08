@@ -16,7 +16,7 @@ const ResponsiveNavBar = () => {
 
   // Navigation items configuration - unified for both mobile and desktop
   const navItems = [
-    { name: 'TymOut', path: '/onlyforyou', icon: <FaTable /> },
+    { name: 'OnlyForYou', path: '/onlyforyou', icon: <FaTable /> },
     { name: 'Explore', path: '/explore', icon: <FaUsers /> },
     { name: 'Message', path: '/message', icon: <FaCommentDots /> },
     { name: 'Profile', path: '/profile', icon: <FaUser /> }
