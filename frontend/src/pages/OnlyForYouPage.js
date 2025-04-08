@@ -15,6 +15,9 @@ import CategoryFilter from '../components/onlyforyou/CategoryFilter';
 import EventList from '../components/onlyforyou/EventList';
 import { FaCalendarAlt } from 'react-icons/fa';
 
+// Import styles
+import '../styles/OnlyForYouPage.css';
+
 /**
  * OnlyForYouPage Component
  * 
@@ -97,7 +100,7 @@ const OnlyForYouPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto px-4 py-6 max-w-full overflow-x-hidden">
       {/* Page Header */}
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Only For You</h1>
@@ -114,13 +117,15 @@ const OnlyForYouPage = () => {
         />
       </div>
 
-      {/* Category Filters */}
-      <div className="mb-6">
-        <CategoryFilter
-          categories={categories}
-          activeCategory={activeCategory}
-          onCategoryChange={handleCategoryChange}
-        />
+      {/* Category Filters - Contained in scrollable wrapper */}
+      <div className="mb-6 overflow-x-auto no-scrollbar">
+        <div className="min-w-full">
+          <CategoryFilter
+            categories={categories}
+            activeCategory={activeCategory}
+            onCategoryChange={handleCategoryChange}
+          />
+        </div>
       </div>
 
       {/* Main Content */}

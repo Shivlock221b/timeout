@@ -15,24 +15,22 @@ const CategoryFilter = ({ categories, activeCategory, onCategoryChange }) => {
   ];
 
   return (
-    <div className="overflow-x-auto pb-2 hide-scrollbar">
-      <div className="flex space-x-2 min-w-max">
-        {allCategories.map(category => (
-          <button
-            key={category.id}
-            onClick={() => onCategoryChange(category.id)}
-            className={`flex items-center px-4 py-2 rounded-full transition-colors duration-200 whitespace-nowrap
-              ${activeCategory === category.id 
-                ? 'bg-indigo-600 text-white' 
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-          >
-            {category.icon && (
-              <span className="mr-2">{category.icon}</span>
-            )}
-            {category.name}
-          </button>
-        ))}
-      </div>
+    <div className="flex space-x-2 min-w-max pb-1">
+      {allCategories.map(category => (
+        <button
+          key={category.id}
+          onClick={() => onCategoryChange(category.id)}
+          className={`flex items-center px-4 py-2 rounded-full transition-colors duration-200 whitespace-nowrap
+            ${activeCategory === category.id 
+              ? 'bg-indigo-600 text-white' 
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+        >
+          {category.icon && (
+            <span className="mr-2">{category.icon}</span>
+          )}
+          {category.name}
+        </button>
+      ))}
     </div>
   );
 };
