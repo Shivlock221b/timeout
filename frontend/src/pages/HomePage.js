@@ -23,8 +23,8 @@ const HomePage = () => {
     };
   }, []);
 
+  // First useEffect: Fetch image URLs from S3 bucket
   useEffect(() => {
-    // Fetch image URLs from S3 bucket
     const fetchImages = async () => {
       try {
         setLoading(true);
@@ -51,19 +51,24 @@ const HomePage = () => {
     };
 
     fetchImages();
+  }, []);
 
+  // Second useEffect: Set up image carousel interval with dependency on images
+  useEffect(() => {
+    // Only set up interval when we have images
+    if (images.length === 0) return;
+    
     // Set interval to change image
     const intervalId = setInterval(() => {
       setCurrentImageIndex(prevIndex => {
-        if (images.length === 0) return 0;
         const nextIndex = (prevIndex + 1) % images.length;
         return nextIndex;
       });
     }, 1500); // Change image every 1.5 seconds for transitions
 
-    // Clean up interval on component unmount
+    // Clean up interval on component unmount or when images change
     return () => clearInterval(intervalId);
-  }, []);
+  }, [images]);
 
   return (
     <>
