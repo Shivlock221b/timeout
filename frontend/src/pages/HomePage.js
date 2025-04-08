@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../components/layout/Header';
 import '../styles/HomePage.css';
 
@@ -7,9 +7,6 @@ const HomePage = () => {
   const [images, setImages] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [preloadedImages, setPreloadedImages] = useState({});
-  // Simplified preloading approach - remove complex queue management
-  const preloadedCount = useRef(0);
 
   // Only hide footer when this component mounts, keep header visible
   useEffect(() => {
@@ -46,20 +43,7 @@ const HomePage = () => {
         }
         
         setImages(imageUrls);
-        
-        // Simplified preloading - load first image, then preload the rest in background
-        if (imageUrls.length > 0) {
-          preloadImage(imageUrls[0]).then(() => {
-            setLoading(false);
-            // Preload remaining images in background
-            imageUrls.slice(1).forEach(url => preloadImage(url));
-          }).catch(() => {
-            // If first image fails, still show the carousel
-            setLoading(false);
-          });
-        } else {
-          setLoading(false);
-        }
+        setLoading(false);
       } catch (error) {
         console.error('Error preparing image URLs:', error);
         setLoading(false);
@@ -80,42 +64,6 @@ const HomePage = () => {
     // Clean up interval on component unmount
     return () => clearInterval(intervalId);
   }, []);
-
-  // Simplified preloading function
-  const preloadImage = (src) => {
-    return new Promise((resolve, reject) => {
-      if (preloadedImages[src]) {
-        resolve(src); // Already preloaded
-        return;
-      }
-
-      const img = new Image();
-      
-      // Set timeout to prevent hanging
-      const timeoutId = setTimeout(() => {
-        if (!preloadedImages[src]) {
-          console.warn(`Preload timeout for image: ${src}`);
-          reject(src);
-        }
-      }, 5000);
-      
-      img.onload = () => {
-        clearTimeout(timeoutId);
-        setPreloadedImages(prev => ({ ...prev, [src]: true }));
-        preloadedCount.current += 1;
-        resolve(src);
-      };
-      
-      img.onerror = () => {
-        clearTimeout(timeoutId);
-        console.error(`Failed to preload image: ${src}`);
-        reject(src);
-      };
-      
-      // Set src after attaching event handlers to ensure they work properly
-      img.src = src;
-    });
-  };
 
   return (
     <>
