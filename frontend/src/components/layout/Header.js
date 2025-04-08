@@ -58,7 +58,7 @@ const Header = () => {
     <>
       {/* Blurred background div that doesn't contain any content */}
       <div 
-        className={`fixed top-0 left-0 right-0 h-[60px] md:h-[72px] z-40 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 h-[70px] md:h-[80px] z-40 transition-all duration-300 ${
           isScrolled 
             ? 'bg-white/30 backdrop-blur-md' 
             : 'bg-indigo-600'
@@ -69,7 +69,7 @@ const Header = () => {
       <header 
         className="fixed top-0 left-0 right-0 z-50 bg-transparent transition-all duration-300"
       >
-        <div className="container mx-auto px-3 py-2 md:px-4 md:py-3 flex justify-between items-center relative">
+        <div className="container mx-auto px-3 py-3 md:px-4 md:py-4 flex justify-between items-center relative">
           {/* Left side - App name */}
           <div className="flex items-center relative">
             <span 
@@ -90,8 +90,8 @@ const Header = () => {
             </Link>
           </div>
           
-          {/* Right side - Host button, Notification icon, and Hamburger menu */}
-          <div className="flex items-center space-x-4">
+          {/* Right side - Host button, Notification icon, and Hamburger menu (only if not authenticated) */}
+          <div className="flex items-center">
             {isAuthenticated && (
               <>
                 <Link 
@@ -101,13 +101,16 @@ const Header = () => {
                   }`}
                   aria-label="Host"
                 >
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-300 ${
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors duration-300 ${
                     isScrolled ? 'bg-indigo-600' : 'bg-indigo-500'
                   }`}>
                     <FaPlus className="text-white" />
                   </div>
                   <span className="text-xs mt-1">Host</span>
                 </Link>
+
+                {/* Spacing between buttons */}
+                <div className="w-6"></div>
 
                 {/* Notification Bell Icon */}
                 <button
@@ -117,7 +120,7 @@ const Header = () => {
                   }`}
                   aria-label="Notifications"
                 >
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-300 relative ${
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors duration-300 relative ${
                     isScrolled ? 'bg-indigo-600' : 'bg-indigo-500'
                   }`}>
                     <FaBell className="text-white" />
@@ -128,19 +131,21 @@ const Header = () => {
               </>
             )}
             
-            {/* Hamburger Menu Button */}
-            <button
-              onClick={toggleMenu}
-              className={`focus:outline-none hover:opacity-80 transition-all duration-300 ${
-                isScrolled ? 'text-indigo-600' : 'text-white'
-              }`}
-              aria-label="Menu"
-            >
-              {isMenuOpen ? 
-                <FaTimes className="text-2xl" /> : 
-                <FaBars className="text-2xl" />
-              }
-            </button>
+            {/* Hamburger Menu Button - Only show if not authenticated */}
+            {!isAuthenticated && (
+              <button
+                onClick={toggleMenu}
+                className={`ml-4 focus:outline-none hover:opacity-80 transition-all duration-300 ${
+                  isScrolled ? 'text-indigo-600' : 'text-white'
+                }`}
+                aria-label="Menu"
+              >
+                {isMenuOpen ? 
+                  <FaTimes className="text-2xl" /> : 
+                  <FaBars className="text-2xl" />
+                }
+              </button>
+            )}
           </div>
         </div>
         
