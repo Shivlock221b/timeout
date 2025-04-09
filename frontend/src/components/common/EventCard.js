@@ -198,6 +198,28 @@ const EventCard = ({ item, size = 'medium', source = 'onlyforyou', type = 'event
       className={`${classes.card} bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer`}
       onClick={handleCardClick}
     >
+      {/* Host/Admin Information - At the very top */}
+      {getPerson() && Object.keys(getPerson()).length > 0 && (
+        <div 
+          className="py-3 px-4 bg-gray-50 flex items-center cursor-pointer hover:bg-gray-100 transition-colors duration-200"
+          onClick={handleProfileClick}
+        >
+          <img 
+            src={getPerson().image} 
+            alt={getPerson().name} 
+            className="w-8 h-8 rounded-full object-cover mr-2"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = 'https://via.placeholder.com/32?text=User'; // Fallback image
+            }}
+          />
+          <div>
+            <p className="text-sm font-medium">{getPerson().name}</p>
+            <p className="text-xs text-gray-500">{getPersonTitle()} {getPerson().verified && '✓'}</p>
+          </div>
+        </div>
+      )}
+      
       <div className="relative">
         {/* Card Image */}
         <img 
@@ -224,28 +246,6 @@ const EventCard = ({ item, size = 'medium', source = 'onlyforyou', type = 'event
       </div>
       
       <div className="p-4">
-        {/* Host/Admin Information */}
-        {getPerson() && Object.keys(getPerson()).length > 0 && (
-          <div 
-            className="mb-3 flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded-md transition-colors duration-200"
-            onClick={handleProfileClick}
-          >
-            <img 
-              src={getPerson().image} 
-              alt={getPerson().name} 
-              className="w-8 h-8 rounded-full object-cover mr-2"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = 'https://via.placeholder.com/32?text=User'; // Fallback image
-              }}
-            />
-            <div>
-              <p className="text-sm font-medium">{getPerson().name}</p>
-              <p className="text-xs text-gray-500">{getPersonTitle()} {getPerson().verified && '✓'}</p>
-            </div>
-          </div>
-        )}
-        
         {/* Title */}
         <h3 className={`${classes.title} font-bold text-gray-800 mb-2`}>{title}</h3>
         
