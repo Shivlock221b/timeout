@@ -105,9 +105,9 @@ body.homepage-active .flex-1 {
   }
   
   .image-carousel-container {
-    width: 75%;
-    max-width: 1200px;
-    height: 80%;
+    width: 65%; /* Reduced from 75% */
+    max-width: 1000px; /* Reduced from 1200px */
+    height: 85%; /* Increased from 80% */
     margin: 0 auto;
     border-radius: 1rem;
     overflow: hidden;

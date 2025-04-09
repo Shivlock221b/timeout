@@ -100,74 +100,78 @@ const OnlyForYouPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-6 overflow-x-hidden">
-      {/* Page Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Only For You</h1>
-        <p className="text-gray-600 mt-2">
-          Personalized event recommendations based on your interests and preferences.
-        </p>
-      </div>
+    <div className="min-h-screen bg-white">
+      <div className="max-w-7xl mx-auto py-4 sm:px-6 lg:px-8">
+        <div className="px-4 py-4 sm:px-2">
+          {/* Page Header */}
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold text-gray-900">Only For You</h1>
+            <p className="text-gray-600 mt-2">
+              Personalized event recommendations based on your interests and preferences.
+            </p>
+          </div>
 
-      {/* Search Bar */}
-      <div className="mb-6">
-        <SearchBar 
-          onSearch={handleSearch} 
-          placeholder="Search for events, activities, or interests..."
-        />
-      </div>
-
-      {/* Category Filters - Contained in scrollable wrapper */}
-      <div className="category-scroll-container mb-6">
-        <CategoryFilter
-          categories={categories}
-          activeCategory={activeCategory}
-          onCategoryChange={handleCategoryChange}
-        />
-      </div>
-
-      {/* Main Content */}
-      <div className="space-y-10">
-        {/* Filtered Results Section (when searching or filtering) */}
-        {(searchQuery || activeCategory !== 'all') && (
-          <section>
-            <h2 className="text-2xl font-semibold mb-4">
-              {searchQuery ? `Results for "${searchQuery}"` : `${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)} Events`}
-            </h2>
-            <EventList 
-              events={filteredEvents} 
-              loading={isLoading}
-              emptyMessage={`No events found${searchQuery ? ` for "${searchQuery}"` : ''}`}
+          {/* Search Bar */}
+          <div className="mb-6">
+            <SearchBar 
+              onSearch={handleSearch} 
+              placeholder="Search for events, activities, or interests..."
             />
-          </section>
-        )}
+          </div>
 
-        {/* Recommended For You Section (when not searching) */}
-        {!searchQuery && activeCategory === 'all' && (
-          <section>
-            <h2 className="text-2xl font-semibold mb-4">Recommended For You</h2>
-            <EventList 
-              events={personalizedEvents} 
-              loading={isLoading}
-              emptyMessage="No recommended events found for you yet."
+          {/* Category Filters - Contained in scrollable wrapper */}
+          <div className="overflow-x-auto no-scrollbar mb-6">
+            <CategoryFilter
+              categories={categories}
+              activeCategory={activeCategory}
+              onCategoryChange={handleCategoryChange}
             />
-          </section>
-        )}
+          </div>
 
-        {/* Upcoming Events Section (only show when not searching or filtering) */}
-        {!searchQuery && activeCategory === 'all' && (
-          <section className="pt-4">
-            <div className="flex items-center mb-4">
-              <FaCalendarAlt className="text-indigo-600 mr-2" />
-              <h2 className="text-2xl font-semibold">Upcoming Events</h2>
-            </div>
-            <EventList 
-              events={upcomingEvents} 
-              loading={isLoading}
-              emptyMessage="No upcoming events to show."
-            />
-          </section>
-        )}
+          {/* Main Content */}
+          <div className="space-y-10">
+            {/* Filtered Results Section (when searching or filtering) */}
+            {(searchQuery || activeCategory !== 'all') && (
+              <section>
+                <h2 className="text-2xl font-semibold mb-4">
+                  {searchQuery ? `Results for "${searchQuery}"` : `${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)} Events`}
+                </h2>
+                <EventList 
+                  events={filteredEvents} 
+                  loading={isLoading}
+                  emptyMessage={`No events found${searchQuery ? ` for "${searchQuery}"` : ''}`}
+                />
+              </section>
+            )}
+
+            {/* Recommended For You Section (when not searching) */}
+            {!searchQuery && activeCategory === 'all' && (
+              <section>
+                <h2 className="text-2xl font-semibold mb-4">Recommended For You</h2>
+                <EventList 
+                  events={personalizedEvents} 
+                  loading={isLoading}
+                  emptyMessage="No recommended events found for you yet."
+                />
+              </section>
+            )}
+
+            {/* Upcoming Events Section (only show when not searching or filtering) */}
+            {!searchQuery && activeCategory === 'all' && (
+              <section className="pt-4">
+                <div className="flex items-center mb-4">
+                  <FaCalendarAlt className="text-indigo-600 mr-2" />
+                  <h2 className="text-2xl font-semibold">Upcoming Events</h2>
+                </div>
+                <EventList 
+                  events={upcomingEvents} 
+                  loading={isLoading}
+                  emptyMessage="No upcoming events to show."
+                />
+              </section>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
