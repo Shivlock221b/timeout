@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../components/layout/Header';
+import { Carousel } from 'react-responsive-carousel';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import '../styles/HomePage.css';
 
 // Following Single Responsibility Principle - HomePage handles layout and data fetching
 const HomePage = () => {
   const [images, setImages] = useState([]);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
 
   // Only hide footer when this component mounts, keep header visible
@@ -23,7 +24,7 @@ const HomePage = () => {
     };
   }, []);
 
-  // First useEffect: Fetch image URLs from S3 bucket
+  // Fetch image URLs from S3 bucket
   useEffect(() => {
     const fetchImages = async () => {
       try {
@@ -53,22 +54,21 @@ const HomePage = () => {
     fetchImages();
   }, []);
 
-  // Second useEffect: Set up image carousel interval with dependency on images
-  useEffect(() => {
-    // Only set up interval when we have images
-    if (images.length === 0) return;
-    
-    // Set interval to change image
-    const intervalId = setInterval(() => {
-      setCurrentImageIndex(prevIndex => {
-        const nextIndex = (prevIndex + 1) % images.length;
-        return nextIndex;
-      });
-    }, 1500); // Change image every 1.5 seconds for transitions
-
-    // Clean up interval on component unmount or when images change
-    return () => clearInterval(intervalId);
-  }, [images]);
+  // Configuration for the carousel
+  const carouselSettings = {
+    autoPlay: true,             // Enable autoplay
+    interval: 1500,             // Time between slide transitions (ms)
+    infiniteLoop: true,         // Loop back to the first slide after the last
+    showArrows: false,          // Hide navigation arrows
+    showStatus: false,          // Hide status indicator (e.g., "1 of 3")
+    showThumbs: false,          // Hide thumbnail navigation
+    showIndicators: true,       // Show indicators dots at the bottom
+    stopOnHover: false,         // Continue playing even when user hovers
+    swipeable: true,            // Allow swiping on touch devices
+    emulateTouch: true,         // Allow mouse drag on non-touch devices
+    transitionTime: 0,       // Transition speed in ms
+    useKeyboardArrows: true     // Allow keyboard navigation
+  };
 
   return (
     <>
@@ -84,20 +84,28 @@ const HomePage = () => {
           <div className="image-carousel-container">
             <div className="image-carousel-fullscreen">
               {images.length > 0 ? (
-                <>
-                  <img 
-                    src={images[currentImageIndex]} 
-                    alt={`Hero image ${currentImageIndex}`} 
-                    className="hero-image-fullscreen"
-                    style={{ objectFit: 'cover', filter: 'none' }}
-                    onError={(e) => {
-                      console.log(`Failed to load image: ${images[currentImageIndex]}`);
-                      // Prevent infinite error loop by removing the src
-                      e.target.onerror = null;
-                      e.target.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
-                    }}
-                  />
-                  <div className="hero-text-overlay">
+                <div className="relative w-full h-full">
+                  <Carousel {...carouselSettings}>
+                    {images.map((imageUrl, index) => (
+                      <div key={index} className="h-full">
+                        <img 
+                          src={imageUrl} 
+                          alt={`Hero image ${index}`} 
+                          className="hero-image-fullscreen"
+                          style={{ objectFit: 'cover', filter: 'none' }}
+                          onError={(e) => {
+                            console.log(`Failed to load image: ${imageUrl}`);
+                            // Prevent infinite error loop by removing the src
+                            e.target.onerror = null;
+                            e.target.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </Carousel>
+                  
+                  {/* Hero text overlay - positioned absolutely on top of the carousel */}
+                  <div className="hero-text-overlay absolute top-0 left-0 right-0 bottom-0 flex flex-col items-center justify-center z-10">
                     <h1>Real. Together</h1>
                     <h2>Your Chance to make Real connections<br />through curated, local experiences</h2>
                     <div className="hero-buttons">
@@ -105,7 +113,7 @@ const HomePage = () => {
                       <button className="hero-button signup-button" onClick={() => window.location.href = '/signup'}>Signup</button>
                     </div>
                   </div>
-                </>
+                </div>
               ) : (
                 <div className="no-images">
                   <p>No images available</p>
