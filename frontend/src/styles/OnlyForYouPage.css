@@ -8,6 +8,7 @@
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
+  touch-action: pan-y; /* Only allow vertical swiping, not horizontal */
 }
 
 /* Category scroll container with horizontal scrolling only */
@@ -21,6 +22,18 @@
 }
 
 .category-scroll-container::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
+/* No scrollbar utility class - preserves scrollability but hides scrollbar */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.no-scrollbar::-webkit-scrollbar {
   display: none;  /* Chrome, Safari and Opera */
 }
 
