@@ -10,6 +10,10 @@ import {
 import ExploreSearch from '../components/explore/ExploreSearch';
 import ExploreFilters from '../components/explore/ExploreFilters';
 import ExploreResults from '../components/explore/ExploreResults';
+import CategoryFilter from '../components/onlyforyou/CategoryFilter';
+
+// Import styles
+import '../styles/ExplorePage.css';
 
 /**
  * ExplorePage Component
@@ -25,6 +29,40 @@ const ExplorePage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState([]);
+  const [startX, setStartX] = useState(null);
+  const [activeCategory, setActiveCategory] = useState('all');
+  
+  // Define categories with icons based on the active tab
+  const getCategories = () => {
+    switch (activeTab) {
+      case 'tables':
+        return [
+          { id: 'social', name: 'Social', icon: '🎭' },
+          { id: 'business', name: 'Business', icon: '💼' },
+          { id: 'restaurant', name: 'Restaurant', icon: '🍽️' },
+          { id: 'cafe', name: 'Cafe', icon: '☕' },
+          { id: 'outdoors', name: 'Outdoors', icon: '🌳' }
+        ];
+      case 'events':
+        return [
+          { id: 'party', name: 'Party', icon: '🎉' },
+          { id: 'workshop', name: 'Workshop', icon: '🔨' },
+          { id: 'concert', name: 'Concert', icon: '🎵' },
+          { id: 'conference', name: 'Conference', icon: '🎤' },
+          { id: 'sports', name: 'Sports', icon: '⚽' }
+        ];
+      case 'circles':
+        return [
+          { id: 'hobby', name: 'Hobby', icon: '🎨' },
+          { id: 'professional', name: 'Professional', icon: '💼' },
+          { id: 'support', name: 'Support', icon: '🤝' },
+          { id: 'interest', name: 'Interest', icon: '🔍' },
+          { id: 'local', name: 'Local', icon: '📍' }
+        ];
+      default:
+        return [];
+    }
+  };
   
   // Filters state
   const [filters, setFilters] = useState({
@@ -32,6 +70,42 @@ const ExplorePage = () => {
     distance: 10,
     sortBy: 'relevance'
   });
+
+  // Handle touch events to prevent horizontal swiping on the page
+  useEffect(() => {
+    const handleTouchStart = (e) => {
+      setStartX(e.touches[0].clientX);
+    };
+
+    const handleTouchMove = (e) => {
+      if (!startX) return;
+      
+      const currentX = e.touches[0].clientX;
+      const diffX = startX - currentX;
+      
+      // If attempting horizontal swipe (with some threshold to allow small movements)
+      if (Math.abs(diffX) > 10) {
+        // Prevent default only for horizontal swipes
+        e.preventDefault();
+      }
+    };
+
+    const handleTouchEnd = () => {
+      setStartX(null);
+    };
+
+    // Add event listeners to the document to catch all touch events
+    document.addEventListener('touchstart', handleTouchStart, { passive: false });
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    document.addEventListener('touchend', handleTouchEnd, { passive: false });
+
+    // Clean up
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [startX]);
 
   // Fetch data whenever tab, search, or filters change
   useEffect(() => {
@@ -68,9 +142,11 @@ const ExplorePage = () => {
             );
           }
           
-          // Apply category filter
-          if (filters.category !== 'all') {
-            data = data.filter(item => item.category === filters.category);
+          // Apply category filter from the CategoryFilter component
+          if (activeCategory !== 'all') {
+            data = data.filter(item => 
+              item.category && item.category.toLowerCase() === activeCategory.toLowerCase()
+            );
           }
           
           // Apply distance filter
@@ -98,7 +174,7 @@ const ExplorePage = () => {
     };
     
     fetchData();
-  }, [activeTab, searchQuery, filters]);
+  }, [activeTab, searchQuery, filters, activeCategory]);
   
   // Handle search input
   const handleSearch = (query) => {
@@ -116,11 +192,17 @@ const ExplorePage = () => {
   // Handle tab changes
   const handleTabChange = (tab) => {
     setActiveTab(tab);
-    // Reset category when tab changes
+    // Reset filters when tab changes
+    setActiveCategory('all');
     setFilters(prev => ({
       ...prev,
       category: 'all'
     }));
+  };
+
+  // Handle category change from CategoryFilter
+  const handleCategoryChange = (categoryId) => {
+    setActiveCategory(categoryId);
   };
 
   return (
@@ -131,7 +213,7 @@ const ExplorePage = () => {
       </div>
       
       {/* Tab navigation */}
-      <div className="mb-6 overflow-x-auto no-scrollbar">
+      <div className="mb-6 tabs-container no-scrollbar">
         <nav className="flex justify-center sm:justify-start min-w-max mx-auto border-b border-gray-200">
           <button
             onClick={() => handleTabChange('tables')}
@@ -175,7 +257,16 @@ const ExplorePage = () => {
         </nav>
       </div>
       
-      {/* Search and filters */}
+      {/* Category filters from OnlyForYouPage - only this section scrolls horizontally */}
+      <div className="category-scroll-container mb-6 no-scrollbar">
+        <CategoryFilter
+          categories={getCategories()}
+          activeCategory={activeCategory}
+          onCategoryChange={handleCategoryChange}
+        />
+      </div>
+      
+      {/* Search and additional filters */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div className="md:col-span-3">
           <ExploreSearch 
