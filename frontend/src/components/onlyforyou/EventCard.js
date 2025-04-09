@@ -9,7 +9,7 @@ import { FaMapMarkerAlt, FaStar, FaUser, FaTag, FaClock, FaCalendarAlt } from 'r
  * Displays an individual event card with all relevant information
  * Following the Single Responsibility Principle - this component only handles displaying event data
  */
-const EventCard = ({ event, size = 'medium', isDetailView = false }) => {
+const EventCard = ({ event, size = 'medium' }) => {
   const navigate = useNavigate();
   
   // Handle null/undefined checks for event properties
@@ -90,12 +90,10 @@ const EventCard = ({ event, size = 'medium', isDetailView = false }) => {
         {/* Event Title */}
         <h3 className={`${classes.title} font-bold text-gray-800 mb-2`}>{title}</h3>
         
-        {/* Event Description - Only show if isDetailView is true */}
-        {isDetailView && description && (
-          <p className={`${classes.description} text-gray-600 mb-3 overflow-hidden`}>
-            {description}
-          </p>
-        )}
+        {/* Event Description */}
+        <p className={`${classes.description} text-gray-600 mb-3 overflow-hidden`}>
+          {description}
+        </p>
         
         {/* Event Meta Information */}
         <div className="space-y-2 text-sm text-gray-500">
@@ -201,14 +199,21 @@ EventCard.propTypes = {
     participants: PropTypes.number,
     maxParticipants: PropTypes.number,
     tags: PropTypes.arrayOf(PropTypes.string),
-    image: PropTypes.string,
-    host: PropTypes.object,
+    image: PropTypes.string.isRequired,
+    host: PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      image: PropTypes.string.isRequired,
+      verified: PropTypes.bool
+    }),
     date: PropTypes.string,
     time: PropTypes.string,
-    recommendation: PropTypes.object
+    recommendation: PropTypes.shape({
+      reason: PropTypes.string.isRequired,
+      score: PropTypes.number.isRequired
+    })
   }),
-  size: PropTypes.oneOf(['small', 'medium', 'large']),
-  isDetailView: PropTypes.bool
+  size: PropTypes.oneOf(['small', 'medium', 'large'])
 };
 
 export default EventCard;
