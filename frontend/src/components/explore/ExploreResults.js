@@ -1,14 +1,14 @@
 import React from 'react';
-import { TableCard, EventCard, CircleCard } from './cards';
+import EventCard from '../common/EventCard';
 
 /**
  * ExploreResults Component
  * 
  * Following Single Responsibility Principle:
  * - This component only handles displaying the results list
- * - It chooses which card type to render based on the active tab
+ * - It uses the type property of each item to determine how to display it
  */
-const ExploreResults = ({ results, isLoading, activeTab }) => {
+const ExploreResults = ({ results, isLoading }) => {
   // Render loading skeleton
   const renderSkeleton = () => (
     <div className="animate-pulse space-y-6">
@@ -43,17 +43,15 @@ const ExploreResults = ({ results, isLoading, activeTab }) => {
           return null;
         }
         
-        // Render appropriate card based on tab
-        switch (activeTab) {
-          case 'tables':
-            return <TableCard key={item.id} item={item} />;
-          case 'events':
-            return <EventCard key={item.id} item={item} />;
-          case 'circles':
-            return <CircleCard key={item.id} item={item} />;
-          default:
-            return <TableCard key={item.id} item={item} />;
-        }
+        // Render unified EventCard using the item's type property
+        return (
+          <EventCard 
+            key={item.id} 
+            item={item} 
+            type={item.type || 'event'} // Default to 'event' if type is missing
+            source="explore"
+          />
+        );
       })}
     </div>
   );

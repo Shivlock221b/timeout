@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useLocation } from 'react-router-dom';
+import { useScrollToElement } from '../context/ScrollToElementContext';
 import { 
   tablesData, 
   eventsData, 
@@ -9,6 +11,7 @@ import {
 // Import our separate components
 import ExploreSearch from '../components/explore/ExploreSearch';
 import ExploreResults from '../components/explore/ExploreResults';
+import TagFilter from '../components/explore/TagFilter';
 
 /**
  * ExplorePage Component
@@ -20,17 +23,20 @@ import ExploreResults from '../components/explore/ExploreResults';
  */
 const ExplorePage = () => {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState('tables');
+  const location = useLocation();
+  const { getScrollTarget, clearScrollTarget } = useScrollToElement();
+  const pageRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
   
   const [filters, setFilters] = useState({
     distance: 10,
     sortBy: 'relevance'
   });
 
-  // Fetch data whenever tab, search, or filters change
+  // Fetch data whenever search, tags, or filters change
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
@@ -39,22 +45,12 @@ const ExplorePage = () => {
         // In a real app, this would be an API call
         // Simulate API delay
         setTimeout(() => {
-          let data;
-          
-          // Select data based on active tab
-          switch (activeTab) {
-            case 'tables':
-              data = [...tablesData];
-              break;
-            case 'events':
-              data = [...eventsData];
-              break;
-            case 'circles':
-              data = [...circlesData];
-              break;
-            default:
-              data = [...tablesData];
-          }
+          // Combine all data types into one array
+          let data = [
+            ...tablesData.map(item => ({ ...item, type: 'table' })),
+            ...eventsData.map(item => ({ ...item, type: 'event' })),
+            ...circlesData.map(item => ({ ...item, type: 'circle' }))
+          ];
           
           // Apply search filter if query exists
           if (searchQuery) {
@@ -63,6 +59,15 @@ const ExplorePage = () => {
               (item.title && item.title.toLowerCase().includes(query)) ||
               (item.description && item.description.toLowerCase().includes(query))
             );
+          }
+          
+          // Filter by selected tags if any are selected
+          if (selectedTags.length > 0) {
+            data = data.filter(item => {
+              if (!item.tags || !Array.isArray(item.tags)) return false;
+              // Check if any of the item's tags match the selected tags
+              return item.tags.some(tag => selectedTags.includes(tag));
+            });
           }
           
           // Apply distance filter
@@ -90,7 +95,60 @@ const ExplorePage = () => {
     };
     
     fetchData();
-  }, [activeTab, searchQuery, filters]);
+  }, [searchQuery, selectedTags, filters]);
+
+  // Handle scroll position restoration
+  useEffect(() => {
+    // Check if we need to scroll to a specific element
+    const scrollToElementId = location.state?.scrollToElementId;
+    
+    if (scrollToElementId) {
+      // Wait for the DOM to be fully rendered and data to be loaded
+      const timer = setTimeout(() => {
+        const elementToScrollTo = document.getElementById(scrollToElementId);
+        if (elementToScrollTo) {
+          elementToScrollTo.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          });
+          
+          // Add a highlight effect to make it easier to identify the element
+          elementToScrollTo.classList.add('bg-indigo-50');
+          setTimeout(() => {
+            elementToScrollTo.classList.remove('bg-indigo-50');
+          }, 1500);
+        }
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    } else {
+      // Check if we have a saved scroll target for this page
+      const savedElementId = getScrollTarget('explore');
+      if (savedElementId && !isLoading) {
+        // Wait for the DOM to be fully rendered
+        const timer = setTimeout(() => {
+          const elementToScrollTo = document.getElementById(savedElementId);
+          if (elementToScrollTo) {
+            elementToScrollTo.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'center' 
+            });
+            
+            // Clear the scroll target after using it
+            clearScrollTarget('explore');
+            
+            // Add a highlight effect
+            elementToScrollTo.classList.add('bg-indigo-50');
+            setTimeout(() => {
+              elementToScrollTo.classList.remove('bg-indigo-50');
+            }, 1500);
+          }
+        }, 100);
+        
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [location, isLoading, results, getScrollTarget, clearScrollTarget]);
   
   // Handle search input
   const handleSearch = (query) => {
@@ -103,69 +161,32 @@ const ExplorePage = () => {
       [filterName]: value
     }));
   };
-  
-  // Handle tab changes
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
+
+  // Handle tag selection
+  const handleTagSelect = (tags) => {
+    setSelectedTags(tags);
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 overflow-x-hidden max-w-full">
+    <div className="container mx-auto px-4 py-8 overflow-x-hidden max-w-full" ref={pageRef}>
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Explore</h1>
         <p className="text-gray-600">Discover people, events, and activities near you</p>
       </div>
       
-      {/* Tab navigation */}
-      <div className="mb-6">
-        <nav className="flex justify-center sm:justify-start border-b border-gray-200 flex-wrap">
-          <button
-            onClick={() => handleTabChange('tables')}
-            className={`relative py-4 px-8 font-medium text-sm whitespace-nowrap transition-all duration-200 ${
-              activeTab === 'tables'
-                ? 'text-indigo-600 font-semibold'
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            <span className="relative z-10">Tables</span>
-            {activeTab === 'tables' && (
-              <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-2/3 h-0.5 bg-indigo-600 shadow-[0_1px_3px_rgba(79,70,229,0.45)]"></span>
-            )}
-          </button>
-          <button
-            onClick={() => handleTabChange('events')}
-            className={`relative py-4 px-8 font-medium text-sm whitespace-nowrap transition-all duration-200 ${
-              activeTab === 'events'
-                ? 'text-indigo-600 font-semibold'
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            <span className="relative z-10">Events</span>
-            {activeTab === 'events' && (
-              <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-2/3 h-0.5 bg-indigo-600 shadow-[0_1px_3px_rgba(79,70,229,0.45)]"></span>
-            )}
-          </button>
-          <button
-            onClick={() => handleTabChange('circles')}
-            className={`relative py-4 px-8 font-medium text-sm whitespace-nowrap transition-all duration-200 ${
-              activeTab === 'circles'
-                ? 'text-indigo-600 font-semibold'
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            <span className="relative z-10">Circles</span>
-            {activeTab === 'circles' && (
-              <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-2/3 h-0.5 bg-indigo-600 shadow-[0_1px_3px_rgba(79,70,229,0.45)]"></span>
-            )}
-          </button>
-        </nav>
-      </div>
-      
       {/* Search section */}
-      <div className="mb-8">
+      <div className="mb-4">
         <ExploreSearch 
           query={searchQuery} 
           onSearch={handleSearch} 
+        />
+      </div>
+      
+      {/* Tag filter section */}
+      <div className="mb-6">
+        <TagFilter 
+          selectedTags={selectedTags}
+          onTagSelect={handleTagSelect}
         />
       </div>
       
@@ -173,8 +194,7 @@ const ExplorePage = () => {
       <div className="mt-8">
         <ExploreResults 
           results={results} 
-          isLoading={isLoading} 
-          activeTab={activeTab} 
+          isLoading={isLoading}
         />
       </div>
     </div>

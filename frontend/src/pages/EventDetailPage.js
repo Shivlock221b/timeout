@@ -29,6 +29,9 @@ const EventDetailPage = () => {
   // Determine if we came from OnlyForYou or Explore page
   const isFromOnlyForYou = location.state?.from === 'onlyforyou';
   
+  // Get the card element ID for scroll position restoration
+  const cardElementId = location.state?.cardElementId;
+  
   // Fetch the item data based on type and id
   useEffect(() => {
     const fetchItemData = async () => {
@@ -90,11 +93,19 @@ const EventDetailPage = () => {
 
   // Handle going back to previous page
   const handleGoBack = () => {
-    // Navigate back to the appropriate page
+    // Navigate back to the appropriate page with scroll position information
     if (isFromOnlyForYou) {
-      navigate('/onlyforyou');
+      navigate('/onlyforyou', { 
+        state: { 
+          scrollToElementId: cardElementId 
+        } 
+      });
     } else {
-      navigate('/explore');
+      navigate('/explore', { 
+        state: { 
+          scrollToElementId: cardElementId 
+        } 
+      });
     }
   };
   

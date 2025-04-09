@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useLocation } from 'react-router-dom';
+import { useScrollToElement } from '../context/ScrollToElementContext';
 import axios from 'axios';
 
 // Import mock data for development
@@ -27,12 +29,15 @@ import '../styles/OnlyForYouPage.css';
  */
 const OnlyForYouPage = () => {
   const { user } = useAuth();
+  const location = useLocation();
+  const { getScrollTarget, clearScrollTarget } = useScrollToElement();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [personalizedEvents, setPersonalizedEvents] = useState([]);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const pageRef = useRef(null);
 
   // Define categories with icons
   const categories = [
@@ -79,6 +84,59 @@ const OnlyForYouPage = () => {
     fetchPersonalizedEvents();
   }, [user]);
 
+  // Handle scroll position restoration
+  useEffect(() => {
+    // Check if we need to scroll to a specific element
+    const scrollToElementId = location.state?.scrollToElementId;
+    
+    if (scrollToElementId) {
+      // Wait for the DOM to be fully rendered
+      const timer = setTimeout(() => {
+        const elementToScrollTo = document.getElementById(scrollToElementId);
+        if (elementToScrollTo) {
+          elementToScrollTo.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          });
+          
+          // Add a highlight effect to make it easier to identify the element
+          elementToScrollTo.classList.add('bg-indigo-50');
+          setTimeout(() => {
+            elementToScrollTo.classList.remove('bg-indigo-50');
+          }, 1500);
+        }
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    } else {
+      // Check if we have a saved scroll target for this page
+      const savedElementId = getScrollTarget('onlyforyou');
+      if (savedElementId && !isLoading) {
+        // Wait for the DOM to be fully rendered
+        const timer = setTimeout(() => {
+          const elementToScrollTo = document.getElementById(savedElementId);
+          if (elementToScrollTo) {
+            elementToScrollTo.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'center' 
+            });
+            
+            // Clear the scroll target after using it
+            clearScrollTarget('onlyforyou');
+            
+            // Add a highlight effect
+            elementToScrollTo.classList.add('bg-indigo-50');
+            setTimeout(() => {
+              elementToScrollTo.classList.remove('bg-indigo-50');
+            }, 1500);
+          }
+        }, 100);
+        
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [location, isLoading, getScrollTarget, clearScrollTarget]);
+
   // Filter events based on search query and active category
   useEffect(() => {
     if (!isLoading) {
@@ -99,7 +157,7 @@ const OnlyForYouPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-6 overflow-x-hidden">
+    <div className="container mx-auto px-4 py-6 overflow-x-hidden" ref={pageRef}>
       {/* Page Header */}
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Only For You</h1>

@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ProfileProvider } from './context/ProfileContext';
 import { NotificationsProvider } from './context/NotificationsContext';
+import { ScrollToElementProvider } from './context/ScrollToElementContext';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
@@ -14,6 +15,7 @@ import ExplorePage from './pages/ExplorePage';
 import NotificationsPage from './pages/NotificationsPage';
 import OnlyForYouPage from './pages/OnlyForYouPage';
 import EventDetailPage from './pages/EventDetailPage';
+import UserProfilePage from './pages/profile/UserProfilePage';
 import AboutPage from './pages/info/AboutPage';
 import FeaturesPage from './pages/info/FeaturesPage';
 import CreatorsPage from './pages/info/CreatorsPage';
@@ -132,6 +134,7 @@ const AppContent = () => {
             
             {/* User management routes */}
             <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+            <Route path="/profile/:id" element={<ProtectedRoute><UserProfilePage /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
             <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
           </Routes>
@@ -149,7 +152,9 @@ const App = () => {
     <AuthProvider>
       <ProfileProvider>
         <NotificationsProvider>
-          <AppContent />
+          <ScrollToElementProvider>
+            <AppContent />
+          </ScrollToElementProvider>
         </NotificationsProvider>
       </ProfileProvider>
     </AuthProvider>

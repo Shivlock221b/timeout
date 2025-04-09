@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import EventCard from './EventCard';
+import EventCard from '../common/EventCard';
 
 /**
  * EventList Component
@@ -8,7 +8,7 @@ import EventCard from './EventCard';
  * Displays a list of events in a responsive grid
  * Following Single Responsibility Principle - this component only handles displaying a list of events
  */
-const EventList = ({ events, emptyMessage = "No events found", loading = false }) => {
+const EventList = ({ events, emptyMessage = "No events found", loading = false, type = 'event' }) => {
   // Handle loading state
   if (loading) {
     return (
@@ -33,7 +33,7 @@ const EventList = ({ events, emptyMessage = "No events found", loading = false }
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {events.map(event => (
-        <EventCard key={event.id} event={event} />
+        <EventCard key={event.id} item={event} type={type} source="onlyforyou" />
       ))}
     </div>
   );
@@ -46,29 +46,22 @@ EventList.propTypes = {
       id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
-      location: PropTypes.string.isRequired,
+      location: PropTypes.string,
       distance: PropTypes.number,
       rating: PropTypes.number,
       participants: PropTypes.number,
       maxParticipants: PropTypes.number,
       tags: PropTypes.arrayOf(PropTypes.string),
-      image: PropTypes.string.isRequired,
-      host: PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-        image: PropTypes.string.isRequired,
-        verified: PropTypes.bool
-      }),
+      image: PropTypes.string,
+      host: PropTypes.object,
       date: PropTypes.string,
       time: PropTypes.string,
-      recommendation: PropTypes.shape({
-        reason: PropTypes.string.isRequired,
-        score: PropTypes.number.isRequired
-      })
+      recommendation: PropTypes.object
     })
   ),
   emptyMessage: PropTypes.string,
-  loading: PropTypes.bool
+  loading: PropTypes.bool,
+  type: PropTypes.oneOf(['event', 'table', 'circle'])
 };
 
 export default EventList;
