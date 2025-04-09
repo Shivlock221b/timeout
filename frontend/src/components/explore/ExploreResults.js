@@ -35,7 +35,7 @@ const ExploreResults = ({ results, isLoading }) => {
   
   // Render results
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
       {results.map(item => {
         // Make sure the item is valid
         if (!item || !item.id) {

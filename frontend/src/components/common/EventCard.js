@@ -201,20 +201,20 @@ const EventCard = ({ item, size = 'medium', source = 'onlyforyou', type = 'event
       {/* Host/Admin Information - At the very top */}
       {getPerson() && Object.keys(getPerson()).length > 0 && (
         <div 
-          className="py-3 px-4 bg-gray-50 flex items-center cursor-pointer hover:bg-gray-100 transition-colors duration-200"
+          className="py-4 px-5 bg-gray-50 flex items-center cursor-pointer hover:bg-gray-100 transition-colors duration-200"
           onClick={handleProfileClick}
         >
           <img 
             src={getPerson().image} 
             alt={getPerson().name} 
-            className="w-8 h-8 rounded-full object-cover mr-2"
+            className="w-10 h-10 rounded-full object-cover mr-3"
             onError={(e) => {
               e.target.onerror = null;
               e.target.src = 'https://via.placeholder.com/32?text=User'; // Fallback image
             }}
           />
           <div>
-            <p className="text-sm font-medium">{getPerson().name}</p>
+            <p className="text-sm font-medium mb-0.5">{getPerson().name}</p>
             <p className="text-xs text-gray-500">{getPersonTitle()} {getPerson().verified && '✓'}</p>
           </div>
         </div>
