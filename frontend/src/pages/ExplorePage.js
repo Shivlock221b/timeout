@@ -8,12 +8,7 @@ import {
 
 // Import our separate components
 import ExploreSearch from '../components/explore/ExploreSearch';
-import ExploreFilters from '../components/explore/ExploreFilters';
 import ExploreResults from '../components/explore/ExploreResults';
-import CategoryFilter from '../components/onlyforyou/CategoryFilter';
-
-// Import styles
-import '../styles/ExplorePage.css';
 
 /**
  * ExplorePage Component
@@ -29,44 +24,8 @@ const ExplorePage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState([]);
-  const [startX, setStartX] = useState(null);
-  const [activeCategory, setActiveCategory] = useState('all');
   
-  // Define categories with icons based on the active tab
-  const getCategories = () => {
-    switch (activeTab) {
-      case 'tables':
-        return [
-          { id: 'social', name: 'Social', icon: '🎭' },
-          { id: 'business', name: 'Business', icon: '💼' },
-          { id: 'restaurant', name: 'Restaurant', icon: '🍽️' },
-          { id: 'cafe', name: 'Cafe', icon: '☕' },
-          { id: 'outdoors', name: 'Outdoors', icon: '🌳' }
-        ];
-      case 'events':
-        return [
-          { id: 'party', name: 'Party', icon: '🎉' },
-          { id: 'workshop', name: 'Workshop', icon: '🔨' },
-          { id: 'concert', name: 'Concert', icon: '🎵' },
-          { id: 'conference', name: 'Conference', icon: '🎤' },
-          { id: 'sports', name: 'Sports', icon: '⚽' }
-        ];
-      case 'circles':
-        return [
-          { id: 'hobby', name: 'Hobby', icon: '🎨' },
-          { id: 'professional', name: 'Professional', icon: '💼' },
-          { id: 'support', name: 'Support', icon: '🤝' },
-          { id: 'interest', name: 'Interest', icon: '🔍' },
-          { id: 'local', name: 'Local', icon: '📍' }
-        ];
-      default:
-        return [];
-    }
-  };
-  
-  // Filters state
   const [filters, setFilters] = useState({
-    category: 'all',
     distance: 10,
     sortBy: 'relevance'
   });
@@ -106,13 +65,6 @@ const ExplorePage = () => {
             );
           }
           
-          // Apply category filter from the CategoryFilter component
-          if (activeCategory !== 'all') {
-            data = data.filter(item => 
-              item.category && item.category.toLowerCase() === activeCategory.toLowerCase()
-            );
-          }
-          
           // Apply distance filter
           if (filters.distance) {
             data = data.filter(item => 
@@ -138,14 +90,13 @@ const ExplorePage = () => {
     };
     
     fetchData();
-  }, [activeTab, searchQuery, filters, activeCategory]);
+  }, [activeTab, searchQuery, filters]);
   
   // Handle search input
   const handleSearch = (query) => {
     setSearchQuery(query);
   };
   
-  // Handle filter changes
   const handleFilterChange = (filterName, value) => {
     setFilters(prev => ({
       ...prev,
@@ -156,29 +107,18 @@ const ExplorePage = () => {
   // Handle tab changes
   const handleTabChange = (tab) => {
     setActiveTab(tab);
-    // Reset filters when tab changes
-    setActiveCategory('all');
-    setFilters(prev => ({
-      ...prev,
-      category: 'all'
-    }));
-  };
-
-  // Handle category change from CategoryFilter
-  const handleCategoryChange = (categoryId) => {
-    setActiveCategory(categoryId);
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 overflow-x-hidden max-w-full">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Explore</h1>
         <p className="text-gray-600">Discover people, events, and activities near you</p>
       </div>
       
       {/* Tab navigation */}
-      <div className="mb-6 tabs-container no-scrollbar">
-        <nav className="flex justify-center sm:justify-start min-w-max mx-auto border-b border-gray-200">
+      <div className="mb-6">
+        <nav className="flex justify-center sm:justify-start border-b border-gray-200 flex-wrap">
           <button
             onClick={() => handleTabChange('tables')}
             className={`relative py-4 px-8 font-medium text-sm whitespace-nowrap transition-all duration-200 ${
@@ -221,31 +161,12 @@ const ExplorePage = () => {
         </nav>
       </div>
       
-      {/* Category filters from OnlyForYouPage - only this section scrolls horizontally */}
-      <div className="category-scroll-container mb-6 no-scrollbar">
-        <CategoryFilter
-          categories={getCategories()}
-          activeCategory={activeCategory}
-          onCategoryChange={handleCategoryChange}
+      {/* Search section */}
+      <div className="mb-8">
+        <ExploreSearch 
+          query={searchQuery} 
+          onSearch={handleSearch} 
         />
-      </div>
-      
-      {/* Search and additional filters */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="md:col-span-3">
-          <ExploreSearch 
-            query={searchQuery} 
-            onSearch={handleSearch} 
-          />
-        </div>
-        
-        <div className="md:col-span-1">
-          <ExploreFilters 
-            filters={filters} 
-            onFilterChange={handleFilterChange} 
-            activeTab={activeTab} 
-          />
-        </div>
       </div>
       
       {/* Results section */}

@@ -28,7 +28,7 @@ const LoginPage = () => {
 
   // Handle Google login
   const handleGoogleLogin = () => {
-    window.location.href = 'https://tymoutapi-gateway-production.up.railway.app/api/users/auth/google';
+    window.location.href = 'http://localhost:3000/api/users/auth/google';
   };
 
   return (

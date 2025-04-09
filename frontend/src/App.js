@@ -13,6 +13,7 @@ import HostPage from './pages/HostPage';
 import ExplorePage from './pages/ExplorePage';
 import NotificationsPage from './pages/NotificationsPage';
 import OnlyForYouPage from './pages/OnlyForYouPage';
+import EventDetailPage from './pages/EventDetailPage';
 import AboutPage from './pages/info/AboutPage';
 import FeaturesPage from './pages/info/FeaturesPage';
 import CreatorsPage from './pages/info/CreatorsPage';
@@ -74,6 +75,41 @@ const AppContent = () => {
                 </ProtectedRoute>
               } 
             />
+            
+            {/* Event detail routes */}
+            <Route 
+              path="/events/:id" 
+              element={
+                <ProtectedRoute>
+                  <EventDetailPage type="events" />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/tables/:id" 
+              element={
+                <ProtectedRoute>
+                  <EventDetailPage type="tables" />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/circles/:id" 
+              element={
+                <ProtectedRoute>
+                  <EventDetailPage type="circles" />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/:type/:id" 
+              element={
+                <ProtectedRoute>
+                  <EventDetailPage />
+                </ProtectedRoute>
+              } 
+            />
+            
             <Route 
               path="/message" 
               element={

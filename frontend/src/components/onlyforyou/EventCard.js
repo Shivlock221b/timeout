@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 import { FaMapMarkerAlt, FaStar, FaUser, FaTag, FaClock, FaCalendarAlt } from 'react-icons/fa';
 
 /**
@@ -9,10 +10,13 @@ import { FaMapMarkerAlt, FaStar, FaUser, FaTag, FaClock, FaCalendarAlt } from 'r
  * Following the Single Responsibility Principle - this component only handles displaying event data
  */
 const EventCard = ({ event, size = 'medium' }) => {
+  const navigate = useNavigate();
+  
   // Handle null/undefined checks for event properties
   if (!event) return null;
   
   const {
+    id,
     title,
     description,
     location,
@@ -27,6 +31,11 @@ const EventCard = ({ event, size = 'medium' }) => {
     time,
     recommendation
   } = event;
+
+  // Navigate to event detail page
+  const handleCardClick = () => {
+    navigate(`/events/${id}`, { state: { from: 'onlyforyou' } });
+  };
 
   // Different class sets based on card size
   const sizeClasses = {
@@ -53,7 +62,10 @@ const EventCard = ({ event, size = 'medium' }) => {
   const classes = sizeClasses[size] || sizeClasses.medium;
 
   return (
-    <div className={`${classes.card} bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300`}>
+    <div 
+      className={`${classes.card} bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer`}
+      onClick={handleCardClick}
+    >
       <div className="relative">
         {/* Event Image */}
         <img 
@@ -200,7 +212,7 @@ EventCard.propTypes = {
       reason: PropTypes.string.isRequired,
       score: PropTypes.number.isRequired
     })
-  }).isRequired,
+  }),
   size: PropTypes.oneOf(['small', 'medium', 'large'])
 };
 

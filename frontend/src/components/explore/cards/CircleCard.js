@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaUsers } from 'react-icons/fa';
 import { 
   CardContainer, 
@@ -15,14 +16,16 @@ import {
  * Following Single Responsibility Principle - This component only handles circle card display
  */
 const CircleCard = ({ item }) => {
+  const navigate = useNavigate();
+
   const handleJoin = () => {
     // Will be implemented with actual functionality
     console.log('Join circle:', item.id);
   };
 
   const handleViewDetails = () => {
-    // Will be implemented with actual functionality
-    console.log('View circle details:', item.id);
+    // Navigate to circle detail page
+    navigate(`/circles/${item.id}`, { state: { from: 'explore' } });
   };
   
   // Make sure we have all required fields from the data
@@ -32,15 +35,16 @@ const CircleCard = ({ item }) => {
     <CardContainer>
       <CardImageSection 
         image={item.image} 
-        type={item.type || "Group"} 
-        activity={item.activity}
+        type="circle"
+        onClick={handleViewDetails} 
       />
       
       <CardContentSection>
         <div className="flex-grow">
           <CardHeader 
             title={item.title} 
-            rating={item.rating} 
+            rating={item.rating}
+            onClick={handleViewDetails} 
           />
           
           <p className="text-gray-600 mb-4 line-clamp-2">{item.description}</p>
@@ -49,23 +53,19 @@ const CircleCard = ({ item }) => {
         </div>
         
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-2 pt-2 border-t border-gray-100">
-          <div className="flex items-center space-x-4 mb-2 sm:mb-0">
-            <div className="flex items-center">
-              <FaUsers className="h-4 w-4 text-gray-500" />
-              <span className="ml-1 text-sm text-gray-600">{item.memberCount || item.members || 0} members</span>
-            </div>
+          <div className="flex items-center">
+            <FaUsers className="h-4 w-4 text-gray-500" />
+            <span className="ml-1 text-sm text-gray-600">{item.memberCount || 0} members</span>
           </div>
           
-          {item.admin && (
-            <PersonInfo 
-              person={item.admin} 
-              title="admin" 
-            />
-          )}
+          <PersonInfo 
+            person={item.admin || {}} 
+            title="admin" 
+          />
         </div>
         
         <CardActions 
-          primaryText="Join Circle"
+          primaryText="Join"
           secondaryText="View Details"
           onPrimaryClick={handleJoin}
           onSecondaryClick={handleViewDetails}

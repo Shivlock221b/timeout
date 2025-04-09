@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaMapMarkerAlt, FaUsers } from 'react-icons/fa';
 import { 
   CardContainer, 
@@ -15,14 +16,16 @@ import {
  * Following Single Responsibility Principle - This component only handles table card display
  */
 const TableCard = ({ item }) => {
+  const navigate = useNavigate();
+
   const handleJoin = () => {
     // Will be implemented with actual functionality
     console.log('Join table:', item.id);
   };
 
   const handleViewDetails = () => {
-    // Will be implemented with actual functionality
-    console.log('View table details:', item.id);
+    // Navigate to table detail page
+    navigate(`/tables/${item.id}`, { state: { from: 'explore' } });
   };
 
   // Make sure we have all required fields from the data
@@ -32,7 +35,8 @@ const TableCard = ({ item }) => {
     <CardContainer>
       <CardImageSection 
         image={item.image} 
-        type={item.type} 
+        type="table" 
+        onClick={handleViewDetails}
       />
       
       <CardContentSection>
@@ -40,6 +44,7 @@ const TableCard = ({ item }) => {
           <CardHeader 
             title={item.title} 
             rating={item.rating} 
+            onClick={handleViewDetails}
           />
           
           <p className="text-gray-600 mb-4 line-clamp-2">{item.description}</p>
@@ -55,12 +60,12 @@ const TableCard = ({ item }) => {
             </div>
             <div className="flex items-center">
               <FaUsers className="h-4 w-4 text-gray-500" />
-              <span className="ml-1 text-sm text-gray-600">{item.participants} participants</span>
+              <span className="ml-1 text-sm text-gray-600">{item.participants || 0} participants</span>
             </div>
           </div>
           
           <PersonInfo 
-            person={item.host} 
+            person={item.host || {}} 
             title="host" 
           />
         </div>

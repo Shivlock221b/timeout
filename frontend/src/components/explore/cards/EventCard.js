@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaMapMarkerAlt, FaUsers, FaCalendarAlt, FaClock } from 'react-icons/fa';
 import { 
   CardContainer, 
@@ -15,14 +16,16 @@ import {
  * Following Single Responsibility Principle - This component only handles event card display
  */
 const EventCard = ({ item }) => {
+  const navigate = useNavigate();
+
   const handleRSVP = () => {
     // Will be implemented with actual functionality
     console.log('RSVP to event:', item.id);
   };
 
   const handleViewDetails = () => {
-    // Will be implemented with actual functionality
-    console.log('View event details:', item.id);
+    // Navigate to event detail page
+    navigate(`/events/${item.id}`, { state: { from: 'explore' } });
   };
 
   // Make sure we have all required fields from the data
@@ -33,6 +36,7 @@ const EventCard = ({ item }) => {
       <CardImageSection 
         image={item.image} 
         type={item.type} 
+        onClick={handleViewDetails}
       />
       
       <CardContentSection>
@@ -40,6 +44,7 @@ const EventCard = ({ item }) => {
           <CardHeader 
             title={item.title} 
             rating={item.rating} 
+            onClick={handleViewDetails}
           />
           
           <p className="text-gray-600 mb-4 line-clamp-2">{item.description}</p>
