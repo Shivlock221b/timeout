@@ -11,7 +11,7 @@ import { useScrollToElement } from '../../context/ScrollToElementContext';
  * Following the Single Responsibility Principle - this component handles displaying all card types
  * with appropriate variations based on the type
  */
-const EventCard = ({ item, size = 'medium', source = 'onlyforyou', type = 'event' }) => {
+const EventCard = ({ item, size = 'medium', source = 'onlyforyou', type = 'event', isDetailView = false }) => {
   const navigate = useNavigate();
   const { setScrollTarget } = useScrollToElement();
   
@@ -250,9 +250,11 @@ const EventCard = ({ item, size = 'medium', source = 'onlyforyou', type = 'event
         <h3 className={`${classes.title} font-bold text-gray-800 mb-2`}>{title}</h3>
         
         {/* Description */}
-        <p className={`${classes.description} text-gray-600 mb-3 overflow-hidden`}>
-          {description}
-        </p>
+        {isDetailView && (
+          <p className={`${classes.description} text-gray-600 mb-3 overflow-hidden`}>
+            {description}
+          </p>
+        )}
         
         {/* Meta Information */}
         <div className="space-y-2 text-sm text-gray-500">
@@ -356,8 +358,6 @@ EventCard.propTypes = {
     distance: PropTypes.number,
     rating: PropTypes.number,
     participants: PropTypes.number,
-    attendees: PropTypes.number,
-    memberCount: PropTypes.number,
     maxParticipants: PropTypes.number,
     tags: PropTypes.arrayOf(PropTypes.string),
     image: PropTypes.string,
@@ -370,7 +370,8 @@ EventCard.propTypes = {
   }).isRequired,
   size: PropTypes.oneOf(['small', 'medium', 'large']),
   source: PropTypes.string,
-  type: PropTypes.oneOf(['event', 'table', 'circle'])
+  type: PropTypes.oneOf(['event', 'table', 'circle']),
+  isDetailView: PropTypes.bool
 };
 
 export default EventCard;

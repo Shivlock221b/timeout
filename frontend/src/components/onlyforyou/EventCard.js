@@ -9,7 +9,7 @@ import { FaMapMarkerAlt, FaStar, FaUser, FaTag, FaClock, FaCalendarAlt } from 'r
  * Displays an individual event card with all relevant information
  * Following the Single Responsibility Principle - this component only handles displaying event data
  */
-const EventCard = ({ event, size = 'medium' }) => {
+const EventCard = ({ event, size = 'medium', isDetailView = false }) => {
   const navigate = useNavigate();
   
   // Handle null/undefined checks for event properties
@@ -90,10 +90,12 @@ const EventCard = ({ event, size = 'medium' }) => {
         {/* Event Title */}
         <h3 className={`${classes.title} font-bold text-gray-800 mb-2`}>{title}</h3>
         
-        {/* Event Description */}
-        <p className={`${classes.description} text-gray-600 mb-3 overflow-hidden`}>
-          {description}
-        </p>
+        {/* Event Description - Only show if isDetailView is true */}
+        {isDetailView && description && (
+          <p className={`${classes.description} text-gray-600 mb-3 overflow-hidden`}>
+            {description}
+          </p>
+        )}
         
         {/* Event Meta Information */}
         <div className="space-y-2 text-sm text-gray-500">
@@ -199,21 +201,14 @@ EventCard.propTypes = {
     participants: PropTypes.number,
     maxParticipants: PropTypes.number,
     tags: PropTypes.arrayOf(PropTypes.string),
-    image: PropTypes.string.isRequired,
-    host: PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      image: PropTypes.string.isRequired,
-      verified: PropTypes.bool
-    }),
+    image: PropTypes.string,
+    host: PropTypes.object,
     date: PropTypes.string,
     time: PropTypes.string,
-    recommendation: PropTypes.shape({
-      reason: PropTypes.string.isRequired,
-      score: PropTypes.number.isRequired
-    })
+    recommendation: PropTypes.object
   }),
-  size: PropTypes.oneOf(['small', 'medium', 'large'])
+  size: PropTypes.oneOf(['small', 'medium', 'large']),
+  isDetailView: PropTypes.bool
 };
 
 export default EventCard;
