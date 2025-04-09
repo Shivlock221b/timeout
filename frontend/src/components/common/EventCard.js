@@ -56,12 +56,12 @@ const EventCard = ({ item, size = 'medium', source = 'onlyforyou', type = 'event
     }
   };
 
-  // Navigate to detail page
+  // Handle card click to navigate to detail page
   const handleCardClick = () => {
-    // Save the card's element ID to the scroll context
+    // Save the scroll target for when we come back
     setScrollTarget(source, cardElementId);
     
-    // Navigate to the detail page with source information
+    // Navigate to detail page
     navigate(getNavigationPath(), { 
       state: { 
         from: source,
@@ -70,12 +70,13 @@ const EventCard = ({ item, size = 'medium', source = 'onlyforyou', type = 'event
     });
   };
 
-  // Navigate to host/admin profile
+  // Handle click on profile section
   const handleProfileClick = (e) => {
     e.stopPropagation(); // Prevent card click
+    
     const person = getPerson();
     if (person && person.id) {
-      // Save the card's element ID to the scroll context for return navigation
+      // Save the scroll target for when we come back
       setScrollTarget(source, cardElementId);
       
       navigate(`/profile/${person.id}`, { 
@@ -223,6 +224,28 @@ const EventCard = ({ item, size = 'medium', source = 'onlyforyou', type = 'event
       </div>
       
       <div className="p-4">
+        {/* Host/Admin Information */}
+        {getPerson() && Object.keys(getPerson()).length > 0 && (
+          <div 
+            className="mb-3 flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded-md transition-colors duration-200"
+            onClick={handleProfileClick}
+          >
+            <img 
+              src={getPerson().image} 
+              alt={getPerson().name} 
+              className="w-8 h-8 rounded-full object-cover mr-2"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = 'https://via.placeholder.com/32?text=User'; // Fallback image
+              }}
+            />
+            <div>
+              <p className="text-sm font-medium">{getPerson().name}</p>
+              <p className="text-xs text-gray-500">{getPersonTitle()} {getPerson().verified && '✓'}</p>
+            </div>
+          </div>
+        )}
+        
         {/* Title */}
         <h3 className={`${classes.title} font-bold text-gray-800 mb-2`}>{title}</h3>
         
@@ -300,28 +323,6 @@ const EventCard = ({ item, size = 'medium', source = 'onlyforyou', type = 'event
           </div>
         )}
         
-        {/* Host/Admin Information */}
-        {getPerson() && Object.keys(getPerson()).length > 0 && (
-          <div 
-            className="mt-4 pt-3 border-t border-gray-100 flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded-md transition-colors duration-200"
-            onClick={handleProfileClick}
-          >
-            <img 
-              src={getPerson().image} 
-              alt={getPerson().name} 
-              className="w-8 h-8 rounded-full object-cover mr-2"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = 'https://via.placeholder.com/32?text=User'; // Fallback image
-              }}
-            />
-            <div>
-              <p className="text-sm font-medium">{getPerson().name}</p>
-              <p className="text-xs text-gray-500">{getPersonTitle()} {getPerson().verified && '✓'}</p>
-            </div>
-          </div>
-        )}
-        
         {/* Action Buttons */}
         <div className="mt-4 flex space-x-2">
           <button
@@ -361,11 +362,11 @@ EventCard.propTypes = {
     tags: PropTypes.arrayOf(PropTypes.string),
     image: PropTypes.string,
     host: PropTypes.object,
-    admin: PropTypes.object,
-    organizer: PropTypes.object,
     date: PropTypes.string,
     time: PropTypes.string,
-    recommendation: PropTypes.object
+    recommendation: PropTypes.shape({
+      score: PropTypes.number
+    })
   }).isRequired,
   size: PropTypes.oneOf(['small', 'medium', 'large']),
   source: PropTypes.string,
