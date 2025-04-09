@@ -71,42 +71,6 @@ const ExplorePage = () => {
     sortBy: 'relevance'
   });
 
-  // Handle touch events to prevent horizontal swiping on the page
-  useEffect(() => {
-    const handleTouchStart = (e) => {
-      setStartX(e.touches[0].clientX);
-    };
-
-    const handleTouchMove = (e) => {
-      if (!startX) return;
-      
-      const currentX = e.touches[0].clientX;
-      const diffX = startX - currentX;
-      
-      // If attempting horizontal swipe (with some threshold to allow small movements)
-      if (Math.abs(diffX) > 10) {
-        // Prevent default only for horizontal swipes
-        e.preventDefault();
-      }
-    };
-
-    const handleTouchEnd = () => {
-      setStartX(null);
-    };
-
-    // Add event listeners to the document to catch all touch events
-    document.addEventListener('touchstart', handleTouchStart, { passive: false });
-    document.addEventListener('touchmove', handleTouchMove, { passive: false });
-    document.addEventListener('touchend', handleTouchEnd, { passive: false });
-
-    // Clean up
-    return () => {
-      document.removeEventListener('touchstart', handleTouchStart);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleTouchEnd);
-    };
-  }, [startX]);
-
   // Fetch data whenever tab, search, or filters change
   useEffect(() => {
     const fetchData = async () => {

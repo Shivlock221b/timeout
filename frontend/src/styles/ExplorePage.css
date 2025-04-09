@@ -19,6 +19,7 @@
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
   padding-bottom: 4px; /* Add some padding to avoid cut-off shadows */
+  touch-action: pan-x;  /* Allow horizontal scrolling only in this container */
 }
 
 .category-scroll-container::-webkit-scrollbar {
