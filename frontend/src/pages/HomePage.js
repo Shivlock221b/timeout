@@ -4,10 +4,10 @@ import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import '../styles/HomePage.css';
 
-// Following Single Responsibility Principle - HomePage handles layout and data fetching
+// Following Single Responsibility Principle - HomePage handles layout and UI
 const HomePage = () => {
-  const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [images, setImages] = useState([]);
 
   // Only hide footer when this component mounts, keep header visible
   useEffect(() => {
@@ -17,41 +17,19 @@ const HomePage = () => {
     // Add class to make header always look glassy/blurred
     document.body.classList.add('homepage-header-glassy');
     
+    // Prepare the local hero images
+    const heroImages = [];
+    for (let i = 0; i <= 6; i++) {
+      heroImages.push(`/hero/hero${i}.jpg`);
+    }
+    setImages(heroImages);
+    setLoading(false);
+    
     // Clean up when component unmounts
     return () => {
       document.body.classList.remove('homepage-active');
       document.body.classList.remove('homepage-header-glassy');
     };
-  }, []);
-
-  // Fetch image URLs from S3 bucket
-  useEffect(() => {
-    const fetchImages = async () => {
-      try {
-        setLoading(true);
-        
-        // Prepare direct image URLs for hero0 through hero6 using the correct format
-        const bucketName = process.env.REACT_APP_BUCKET_NAME || 'tymouttest';
-        const region = process.env.REACT_APP_AWS_REGION || 'ap-south-1'; 
-        const folder = 'home'; 
-        
-        const imageUrls = [];
-        // Updated to fetch 7 images (hero0 through hero6)
-        for (let i = 0; i <= 6; i++) {
-          // Construct the direct URL exactly matching the format from the example
-          const url = `https://${bucketName}.s3.${region}.amazonaws.com/${folder}/hero${i}.jpg`;
-          imageUrls.push(url);
-        }
-        
-        setImages(imageUrls);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error preparing image URLs:', error);
-        setLoading(false);
-      }
-    };
-
-    fetchImages();
   }, []);
 
   // Configuration for the carousel
@@ -66,7 +44,7 @@ const HomePage = () => {
     stopOnHover: false,         // Continue playing even when user hovers
     swipeable: true,            // Allow swiping on touch devices
     emulateTouch: true,         // Allow mouse drag on non-touch devices
-    transitionTime: 0,       // Transition speed in ms
+    transitionTime: 0,          // Transition speed in ms
     useKeyboardArrows: true     // Allow keyboard navigation
   };
 
@@ -93,12 +71,6 @@ const HomePage = () => {
                           alt={`Hero image ${index}`} 
                           className="hero-image-fullscreen"
                           style={{ objectFit: 'cover', filter: 'none' }}
-                          onError={(e) => {
-                            console.log(`Failed to load image: ${imageUrl}`);
-                            // Prevent infinite error loop by removing the src
-                            e.target.onerror = null;
-                            e.target.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
-                          }}
                         />
                       </div>
                     ))}
