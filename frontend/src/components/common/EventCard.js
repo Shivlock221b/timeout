@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
-import { FaMapMarkerAlt, FaStar, FaUser, FaTag, FaClock, FaCalendarAlt, FaUsers } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaTag, FaClock, FaCalendarAlt, FaUsers } from 'react-icons/fa';
 import { useScrollToElement } from '../../context/ScrollToElementContext';
 
 /**
@@ -24,7 +24,6 @@ const EventCard = ({ item, size = 'medium', source = 'onlyforyou', type = 'event
     description,
     location,
     distance,
-    rating,
     participants,
     maxParticipants,
     tags,
@@ -39,9 +38,6 @@ const EventCard = ({ item, size = 'medium', source = 'onlyforyou', type = 'event
 
   // Generate a unique element ID for this card
   const cardElementId = `${type}-card-${id}`;
-
-  // For backward compatibility, reshape data if needed
-  const event = item.event || item;
 
   // Different navigation paths based on card type
   const getNavigationPath = () => {
@@ -143,16 +139,9 @@ const EventCard = ({ item, size = 'medium', source = 'onlyforyou', type = 'event
     }
   };
 
-  // Get the appropriate primary action text based on card type
+  // Get the primary action text
   const getPrimaryActionText = () => {
-    switch (type) {
-      case 'table':
-      case 'circle':
-        return 'Join';
-      case 'event':
-      default:
-        return 'RSVP';
-    }
+    return 'Request to Join';
   };
 
   // Get the person title based on card type
@@ -287,14 +276,8 @@ const EventCard = ({ item, size = 'medium', source = 'onlyforyou', type = 'event
             </div>
           )}
           
-          {/* Rating and Participants */}
+          {/* Participants */}
           <div className="flex items-center justify-between">
-            {rating && (
-              <div className="flex items-center">
-                <FaStar className="mr-1 text-yellow-500" />
-                <span>{rating.toFixed(1)}</span>
-              </div>
-            )}
             <div className="flex items-center">
               <FaUsers className="mr-1 text-indigo-600" />
               <span>
@@ -326,21 +309,12 @@ const EventCard = ({ item, size = 'medium', source = 'onlyforyou', type = 'event
         )}
         
         {/* Action Buttons */}
-        <div className="mt-4 flex space-x-2">
+        <div className="mt-4 flex">
           <button
             onClick={handlePrimaryAction}
-            className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md transition-colors duration-200"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md transition-colors duration-200"
           >
             {getPrimaryActionText()}
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleCardClick();
-            }}
-            className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-2 px-4 rounded-md transition-colors duration-200"
-          >
-            View Details
           </button>
         </div>
       </div>
@@ -356,7 +330,6 @@ EventCard.propTypes = {
     description: PropTypes.string.isRequired,
     location: PropTypes.string,
     distance: PropTypes.number,
-    rating: PropTypes.number,
     participants: PropTypes.number,
     maxParticipants: PropTypes.number,
     tags: PropTypes.arrayOf(PropTypes.string),

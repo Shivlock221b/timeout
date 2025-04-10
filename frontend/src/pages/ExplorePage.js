@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useAuth } from '../context/AuthContext';
 import { useLocation } from 'react-router-dom';
 import { useScrollToElement } from '../context/ScrollToElementContext';
 import { 
@@ -22,7 +21,6 @@ import TagFilter from '../components/explore/TagFilter';
  * - Display logic is delegated to specialized components
  */
 const ExplorePage = () => {
-  const { user } = useAuth();
   const location = useLocation();
   const { getScrollTarget, clearScrollTarget } = useScrollToElement();
   const pageRef = useRef(null);
@@ -31,11 +29,6 @@ const ExplorePage = () => {
   const [results, setResults] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   
-  const [filters, setFilters] = useState({
-    distance: 10,
-    sortBy: 'relevance'
-  });
-
   // Fetch data whenever search, tags, or filters change
   useEffect(() => {
     const fetchData = async () => {
@@ -70,20 +63,6 @@ const ExplorePage = () => {
             });
           }
           
-          // Apply distance filter
-          if (filters.distance) {
-            data = data.filter(item => 
-              item.distance && item.distance <= filters.distance
-            );
-          }
-          
-          // Apply sorting
-          if (filters.sortBy === 'distance') {
-            data.sort((a, b) => (a.distance || 0) - (b.distance || 0));
-          } else if (filters.sortBy === 'rating') {
-            data.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-          }
-          
           setResults(data);
           setIsLoading(false);
         }, 500);
@@ -95,7 +74,7 @@ const ExplorePage = () => {
     };
     
     fetchData();
-  }, [searchQuery, selectedTags, filters]);
+  }, [searchQuery, selectedTags]);
 
   // Handle scroll position restoration
   useEffect(() => {
@@ -155,13 +134,6 @@ const ExplorePage = () => {
     setSearchQuery(query);
   };
   
-  const handleFilterChange = (filterName, value) => {
-    setFilters(prev => ({
-      ...prev,
-      [filterName]: value
-    }));
-  };
-
   // Handle tag selection
   const handleTagSelect = (tags) => {
     setSelectedTags(tags);

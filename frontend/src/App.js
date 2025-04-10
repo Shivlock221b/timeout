@@ -15,6 +15,7 @@ import ExplorePage from './pages/ExplorePage';
 import NotificationsPage from './pages/NotificationsPage';
 import OnlyForYouPage from './pages/OnlyForYouPage';
 import EventDetailPage from './pages/EventDetailPage';
+import { MessageIndexPage, MessageDetailPage } from './pages/message';
 import UserProfilePage from './pages/profile/UserProfilePage';
 import AboutPage from './pages/info/AboutPage';
 import FeaturesPage from './pages/info/FeaturesPage';
@@ -113,13 +114,18 @@ const AppContent = () => {
             />
             
             <Route 
-              path="/message" 
+              path="/messages" 
               element={
                 <ProtectedRoute>
-                  <div className="container mx-auto px-4 py-8">
-                    <h1 className="text-3xl font-bold mb-4">Messages</h1>
-                    <p>Your conversations and chats.</p>
-                  </div>
+                  <MessageIndexPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/messages/:threadId" 
+              element={
+                <ProtectedRoute>
+                  <MessageDetailPage />
                 </ProtectedRoute>
               } 
             />

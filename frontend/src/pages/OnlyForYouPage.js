@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLocation } from 'react-router-dom';
 import { useScrollToElement } from '../context/ScrollToElementContext';
-import axios from 'axios';
 
 // Import mock data for development
 import { 
@@ -32,24 +31,11 @@ const OnlyForYouPage = () => {
   const location = useLocation();
   const { getScrollTarget, clearScrollTarget } = useScrollToElement();
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState('all');
   const [personalizedEvents, setPersonalizedEvents] = useState([]);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const pageRef = useRef(null);
-
-  // Define categories with icons
-  const categories = [
-    { id: 'social', name: 'Social', icon: '🎭' },
-    { id: 'business', name: 'Business', icon: '💼' },
-    { id: 'fitness', name: 'Fitness', icon: '🏋️' },
-    { id: 'educational', name: 'Education', icon: '📚' },
-    { id: 'food', name: 'Food', icon: '🍲' },
-    { id: 'outdoor', name: 'Outdoor', icon: '🌲' },
-    { id: 'music', name: 'Music', icon: '🎵' },
-    { id: 'creative', name: 'Creative', icon: '🎨' }
-  ];
 
   // Fetch personalized events data
   useEffect(() => {
@@ -137,23 +123,18 @@ const OnlyForYouPage = () => {
     }
   }, [location, isLoading, getScrollTarget, clearScrollTarget]);
 
-  // Filter events based on search query and active category
+  // Filter events based on search query
   useEffect(() => {
     if (!isLoading) {
-      // Filter events based on the current search query and category
-      const filtered = generatePersonalizedResults(searchQuery, activeCategory);
+      // Filter events based on the current search query
+      const filtered = generatePersonalizedResults(searchQuery);
       setFilteredEvents(filtered);
     }
-  }, [searchQuery, activeCategory, personalizedEvents, upcomingEvents, isLoading]);
+  }, [searchQuery, personalizedEvents, upcomingEvents, isLoading]);
 
   // Handle search
   const handleSearch = (query) => {
     setSearchQuery(query);
-  };
-
-  // Handle category change
-  const handleCategoryChange = (categoryId) => {
-    setActiveCategory(categoryId);
   };
 
   return (
@@ -176,22 +157,22 @@ const OnlyForYouPage = () => {
 
       {/* Main Content */}
       <div className="space-y-10">
-        {/* Filtered Results Section (when searching or filtering) */}
-        {(searchQuery || activeCategory !== 'all') && (
+        {/* Filtered Results Section (when searching) */}
+        {searchQuery && (
           <section>
             <h2 className="text-2xl font-semibold mb-4">
-              {searchQuery ? `Results for "${searchQuery}"` : `${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)} Events`}
+              Results for "{searchQuery}"
             </h2>
             <EventList 
               events={filteredEvents} 
               loading={isLoading}
-              emptyMessage={`No events found${searchQuery ? ` for "${searchQuery}"` : ''}`}
+              emptyMessage={`No events found for "${searchQuery}"`}
             />
           </section>
         )}
 
         {/* Recommended For You Section (when not searching) */}
-        {!searchQuery && activeCategory === 'all' && (
+        {!searchQuery && (
           <section>
             <EventList 
               events={personalizedEvents} 
@@ -201,8 +182,8 @@ const OnlyForYouPage = () => {
           </section>
         )}
 
-        {/* Upcoming Events Section (only show when not searching or filtering) */}
-        {!searchQuery && activeCategory === 'all' && (
+        {/* Upcoming Events Section (only show when not searching) */}
+        {!searchQuery && (
           <section className="pt-4">
             <div className="flex items-center mb-4">
               <FaCalendarAlt className="text-indigo-600 mr-2" />

@@ -1,207 +1,384 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { FaCalendarAlt, FaSyncAlt, FaExclamationTriangle } from 'react-icons/fa';
 
-// Single Responsibility Principle: This component is only responsible for the recurring event configuration
+/**
+ * RecurringEventScheduler Component
+ *
+ * Single Responsibility: Manages the UI for setting up recurring event schedules
+ * Interface Segregation: Only accepts props it needs
+ */
 const RecurringEventScheduler = ({ eventData, onEventDataChange, onSubmit }) => {
-  // Handle changes to the recurring pattern
-  const handleRecurringChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  const [errors, setErrors] = useState({});
+  
+  // Days of the week for the weekly pattern
+  const daysOfWeek = [
+    { value: 'monday', label: 'Mon' },
+    { value: 'tuesday', label: 'Tue' },
+    { value: 'wednesday', label: 'Wed' },
+    { value: 'thursday', label: 'Thu' },
+    { value: 'friday', label: 'Fri' },
+    { value: 'saturday', label: 'Sat' },
+    { value: 'sunday', label: 'Sun' }
+  ];
+  
+  // Handle changes to recurring pattern properties
+  const handlePatternChange = (e) => {
+    const { name, value } = e.target;
     
-    // Create a new recurring pattern object with the updated value
-    const updatedPattern = {
-      ...eventData.recurringPattern,
-      [name]: type === 'checkbox' ? checked : value
-    };
+    // Clear error for this field when user changes it
+    if (errors[`pattern.${name}`]) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[`pattern.${name}`];
+        return newErrors;
+      });
+    }
     
-    // Update the parent state with the new pattern
-    onEventDataChange({
-      recurringPattern: updatedPattern
-    });
-  };
-
-  // Handle day of week selection for weekly recurring events
-  const handleDaySelect = (day) => {
-    const currentDays = [...eventData.recurringPattern.daysOfWeek];
-    const updatedDays = currentDays.includes(day) 
-      ? currentDays.filter(d => d !== day)
-      : [...currentDays, day];
-    
-    // Update the recurring pattern with the new days
     onEventDataChange({
       recurringPattern: {
         ...eventData.recurringPattern,
-        daysOfWeek: updatedDays
+        [name]: value
       }
     });
   };
-
-  // Day names for weekly selection
-  const daysOfWeek = [
-    { value: 0, label: 'Sun' },
-    { value: 1, label: 'Mon' },
-    { value: 2, label: 'Tue' },
-    { value: 3, label: 'Wed' },
-    { value: 4, label: 'Thu' },
-    { value: 5, label: 'Fri' },
-    { value: 6, label: 'Sat' }
-  ];
   
-  // Function to create the recurring event title based on pattern
-  const getRecurringTitle = () => {
-    const frequency = eventData.recurringPattern.frequency;
-    const interval = eventData.recurringPattern.interval;
+  // Handle changes to pattern interval (numeric value)
+  const handleIntervalChange = (e) => {
+    const value = parseInt(e.target.value, 10) || 1;
+    
+    onEventDataChange({
+      recurringPattern: {
+        ...eventData.recurringPattern,
+        interval: value
+      }
+    });
+  };
+  
+  // Toggle day selection for weekly recurring events
+  const toggleDayOfWeek = (day) => {
+    const currentDays = eventData.recurringPattern.daysOfWeek || [];
+    let newDays;
+    
+    if (currentDays.includes(day)) {
+      newDays = currentDays.filter(d => d !== day);
+    } else {
+      newDays = [...currentDays, day];
+    }
+    
+    onEventDataChange({
+      recurringPattern: {
+        ...eventData.recurringPattern,
+        daysOfWeek: newDays
+      }
+    });
+    
+    // Clear error if at least one day is selected
+    if (newDays.length > 0 && errors['pattern.daysOfWeek']) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors['pattern.daysOfWeek'];
+        return newErrors;
+      });
+    }
+  };
+  
+  // Function to validate form
+  const validateForm = () => {
+    const newErrors = {};
+    
+    // Basic event data validations
+    if (!eventData.title.trim()) {
+      newErrors.title = 'Title is required';
+    }
+    
+    if (!eventData.description.trim()) {
+      newErrors.description = 'Description is required';
+    }
+    
+    if (!eventData.location) {
+      newErrors.location = 'Location is required';
+    }
+    
+    // Recurring pattern validations
+    if (!eventData.recurringPattern.endDate) {
+      newErrors['pattern.endDate'] = 'End date is required';
+    }
+    
+    // If weekly recurrence, at least one day must be selected
+    if (
+      eventData.recurringPattern.frequency === 'weekly' && 
+      (!eventData.recurringPattern.daysOfWeek || eventData.recurringPattern.daysOfWeek.length === 0)
+    ) {
+      newErrors['pattern.daysOfWeek'] = 'At least one day of the week must be selected';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+  
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    if (validateForm()) {
+      onSubmit(e);
+    }
+  };
+  
+  // Generate a human-readable description of the recurring pattern
+  const getPatternDescription = () => {
+    const { frequency, interval, daysOfWeek = [] } = eventData.recurringPattern;
+    
+    let description = 'Repeats ';
     
     if (frequency === 'daily') {
-      return interval === 1 ? 'Daily' : `Every ${interval} days`;
+      description += interval === 1 ? 'daily' : `every ${interval} days`;
     } else if (frequency === 'weekly') {
-      return interval === 1 ? 'Weekly' : `Every ${interval} weeks`;
+      if (daysOfWeek.length === 0) {
+        description += interval === 1 ? 'weekly' : `every ${interval} weeks`;
+      } else if (daysOfWeek.length === 7) {
+        description += 'every day';
+      } else {
+        description += interval === 1 ? 'weekly on ' : `every ${interval} weeks on `;
+        description += daysOfWeek
+          .sort((a, b) => {
+            const order = { 'monday': 0, 'tuesday': 1, 'wednesday': 2, 'thursday': 3, 'friday': 4, 'saturday': 5, 'sunday': 6 };
+            return order[a] - order[b];
+          })
+          .map(day => day.charAt(0).toUpperCase() + day.slice(1))
+          .join(', ');
+      }
     } else if (frequency === 'monthly') {
-      return interval === 1 ? 'Monthly' : `Every ${interval} months`;
+      description += interval === 1 ? 'monthly' : `every ${interval} months`;
     }
-    return 'Custom';
+    
+    if (eventData.recurringPattern.endDate) {
+      description += ` until ${new Date(eventData.recurringPattern.endDate).toLocaleDateString()}`;
+    }
+    
+    return description;
   };
 
   return (
-    <div className="bg-white shadow overflow-hidden sm:rounded-lg p-6">
-      <div className="mb-6">
-        <h2 className="text-xl font-medium text-gray-900">Configure Recurring Events</h2>
+    <div className="bg-white shadow-sm rounded-lg overflow-hidden">
+      <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
+        <h2 className="text-xl font-medium text-gray-900">Set Up Recurring Event</h2>
         <p className="mt-1 text-sm text-gray-500">
-          Set up a schedule for recurring events. You can choose frequency, interval, and end date.
+          Create events that repeat on a regular schedule
         </p>
       </div>
 
-      <form onSubmit={(e) => {
-        e.preventDefault();
-        onEventDataChange({ isRecurring: true });
-        onSubmit(e);
-      }}>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          <div className="col-span-2">
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+      <form onSubmit={handleSubmit} className="px-4 py-5 sm:p-6">
+        <div className="space-y-6">
+          {/* Title Field */}
+          <div>
+            <label htmlFor="recurring-title" className="block text-sm font-medium text-gray-700">
               Event Title*
             </label>
-            <input
-              type="text"
-              name="title"
-              id="title"
-              value={eventData.title}
-              onChange={(e) => onEventDataChange({ title: e.target.value })}
-              required
-              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-              placeholder="e.g., Weekly Book Club"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="frequency" className="block text-sm font-medium text-gray-700">
-              Frequency
-            </label>
-            <select
-              id="frequency"
-              name="frequency"
-              value={eventData.recurringPattern.frequency}
-              onChange={handleRecurringChange}
-              className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            >
-              <option value="daily">Daily</option>
-              <option value="weekly">Weekly</option>
-              <option value="monthly">Monthly</option>
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor="interval" className="block text-sm font-medium text-gray-700">
-              Interval
-            </label>
-            <div className="mt-1 flex rounded-md shadow-sm">
-              <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
-                Every
-              </span>
+            <div className="mt-1">
               <input
-                type="number"
-                name="interval"
-                id="interval"
-                min="1"
-                max="30"
-                value={eventData.recurringPattern.interval}
-                onChange={handleRecurringChange}
-                className="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300"
+                type="text"
+                id="recurring-title"
+                name="title"
+                value={eventData.title}
+                onChange={(e) => onEventDataChange({ title: e.target.value })}
+                className={`block w-full rounded-md shadow-sm sm:text-sm ${
+                  errors.title 
+                    ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+                    : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
+                }`}
               />
-              <span className="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
-                {eventData.recurringPattern.frequency === 'daily' ? 'days' : 
-                 eventData.recurringPattern.frequency === 'weekly' ? 'weeks' : 'months'}
-              </span>
+              {errors.title && (
+                <p className="mt-1 text-sm text-red-600">{errors.title}</p>
+              )}
             </div>
           </div>
 
-          {eventData.recurringPattern.frequency === 'weekly' && (
-            <div className="col-span-2">
-              <span className="block text-sm font-medium text-gray-700 mb-2">Days of Week</span>
-              <div className="flex flex-wrap gap-2">
-                {daysOfWeek.map((day) => (
-                  <button
-                    key={day.value}
-                    type="button"
-                    onClick={() => handleDaySelect(day.value)}
-                    className={`px-3 py-2 text-sm rounded-full ${
-                      eventData.recurringPattern.daysOfWeek.includes(day.value)
-                        ? 'bg-indigo-600 text-white'
-                        : 'bg-gray-200 text-gray-700'
-                    }`}
-                  >
-                    {day.label}
-                  </button>
-                ))}
+          {/* Description Field */}
+          <div>
+            <label htmlFor="recurring-description" className="block text-sm font-medium text-gray-700">
+              Description*
+            </label>
+            <div className="mt-1">
+              <textarea
+                id="recurring-description"
+                name="description"
+                rows="3"
+                value={eventData.description}
+                onChange={(e) => onEventDataChange({ description: e.target.value })}
+                className={`block w-full rounded-md shadow-sm sm:text-sm ${
+                  errors.description
+                    ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+                    : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
+                }`}
+              />
+              {errors.description && (
+                <p className="mt-1 text-sm text-red-600">{errors.description}</p>
+              )}
+            </div>
+          </div>
+
+          {/* Location Field */}
+          <div>
+            <label htmlFor="recurring-location" className="block text-sm font-medium text-gray-700">
+              Location*
+            </label>
+            <div className="mt-1">
+              <input
+                type="text"
+                id="recurring-location"
+                name="location"
+                value={eventData.location}
+                onChange={(e) => onEventDataChange({ location: e.target.value })}
+                className={`block w-full rounded-md shadow-sm sm:text-sm ${
+                  errors.location 
+                    ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+                    : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
+                }`}
+              />
+              {errors.location && (
+                <p className="mt-1 text-sm text-red-600">{errors.location}</p>
+              )}
+            </div>
+          </div>
+          
+          {/* Recurring Pattern Section */}
+          <div className="pt-4 border-t border-gray-200">
+            <h3 className="text-lg font-medium text-gray-900 flex items-center">
+              <FaSyncAlt className="mr-2 text-indigo-500" />
+              Recurrence Pattern
+            </h3>
+            
+            {/* Pattern Summary */}
+            <div className="mt-2 p-3 bg-indigo-50 rounded-md text-sm text-indigo-700">
+              {getPatternDescription()}
+            </div>
+            
+            {/* Frequency Selection */}
+            <div className="mt-4">
+              <label htmlFor="pattern-frequency" className="block text-sm font-medium text-gray-700">
+                Repeats
+              </label>
+              <select
+                id="pattern-frequency"
+                name="frequency"
+                value={eventData.recurringPattern.frequency}
+                onChange={handlePatternChange}
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+              >
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+              </select>
+            </div>
+            
+            {/* Interval Selection */}
+            <div className="mt-4">
+              <label htmlFor="pattern-interval" className="block text-sm font-medium text-gray-700">
+                Repeat every
+              </label>
+              <div className="mt-1 flex items-center">
+                <input
+                  type="number"
+                  id="pattern-interval"
+                  name="interval"
+                  min="1"
+                  max="30"
+                  value={eventData.recurringPattern.interval}
+                  onChange={handleIntervalChange}
+                  className="max-w-xs block rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                />
+                <span className="ml-2 text-sm text-gray-500">
+                  {eventData.recurringPattern.frequency === 'daily' && 'day(s)'}
+                  {eventData.recurringPattern.frequency === 'weekly' && 'week(s)'}
+                  {eventData.recurringPattern.frequency === 'monthly' && 'month(s)'}
+                </span>
               </div>
             </div>
-          )}
-
-          <div className="col-span-2">
-            <label htmlFor="endDate" className="block text-sm font-medium text-gray-700">
-              End Date
-            </label>
-            <input
-              type="date"
-              name="endDate"
-              id="endDate"
-              value={eventData.recurringPattern.endDate}
-              onChange={handleRecurringChange}
-              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-            />
-            <p className="mt-1 text-sm text-gray-500">
-              Leave empty for an indefinite recurring event.
-            </p>
-          </div>
-
-          <div className="col-span-2">
-            <div className="bg-gray-50 p-4 rounded-md mt-4">
-              <h3 className="text-sm font-medium text-gray-900">Summary</h3>
-              <p className="text-sm text-gray-700 mt-1">
-                This event will occur <strong>{getRecurringTitle()}</strong>
-                {eventData.recurringPattern.frequency === 'weekly' && eventData.recurringPattern.daysOfWeek.length > 0 && (
-                  <> on <strong>
-                    {eventData.recurringPattern.daysOfWeek
-                      .sort()
-                      .map(day => daysOfWeek.find(d => d.value === day).label)
-                      .join(', ')}
-                  </strong></>
+            
+            {/* Days of Week Selection (for weekly frequency) */}
+            {eventData.recurringPattern.frequency === 'weekly' && (
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  On which days
+                </label>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {daysOfWeek.map(day => (
+                    <button
+                      key={day.value}
+                      type="button"
+                      onClick={() => toggleDayOfWeek(day.value)}
+                      className={`px-3 py-1.5 text-sm font-medium rounded-full ${
+                        eventData.recurringPattern.daysOfWeek?.includes(day.value)
+                          ? 'bg-indigo-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {day.label}
+                    </button>
+                  ))}
+                </div>
+                {errors['pattern.daysOfWeek'] && (
+                  <p className="mt-1 text-sm text-red-600">{errors['pattern.daysOfWeek']}</p>
                 )}
-                {eventData.recurringPattern.endDate && (
-                  <> until <strong>{new Date(eventData.recurringPattern.endDate).toLocaleDateString()}</strong></>
+              </div>
+            )}
+            
+            {/* End Date */}
+            <div className="mt-4">
+              <label htmlFor="pattern-end-date" className="block text-sm font-medium text-gray-700">
+                <span className="flex items-center">
+                  <FaCalendarAlt className="mr-2 text-gray-400" />
+                  End Date*
+                </span>
+              </label>
+              <div className="mt-1">
+                <input
+                  type="date"
+                  id="pattern-end-date"
+                  name="endDate"
+                  value={eventData.recurringPattern.endDate}
+                  onChange={handlePatternChange}
+                  className={`block w-full rounded-md shadow-sm sm:text-sm ${
+                    errors['pattern.endDate']
+                      ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+                      : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
+                  }`}
+                />
+                {errors['pattern.endDate'] && (
+                  <p className="mt-1 text-sm text-red-600">{errors['pattern.endDate']}</p>
                 )}
-                .
-              </p>
+              </div>
             </div>
           </div>
-
-          <div className="col-span-2 mt-6">
-            <button
-              type="submit"
-              className="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Create Recurring Event
-            </button>
+          
+          {/* Notice section */}
+          <div className="rounded-md bg-yellow-50 p-4">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <FaExclamationTriangle className="h-5 w-5 text-yellow-400" />
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-yellow-800">Recurring Event Notice</h3>
+                <div className="mt-2 text-sm text-yellow-700">
+                  <p>
+                    This will create multiple events based on your recurrence pattern. Be sure you have the
+                    availability for all occurrences. You can edit individual occurrences later.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
+
+        <div className="mt-8">
+          <button
+            type="submit"
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            Create Recurring Event
+          </button>
         </div>
       </form>
     </div>
@@ -210,14 +387,15 @@ const RecurringEventScheduler = ({ eventData, onEventDataChange, onSubmit }) => 
 
 RecurringEventScheduler.propTypes = {
   eventData: PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    isRecurring: PropTypes.bool.isRequired,
+    title: PropTypes.string,
+    description: PropTypes.string,
+    location: PropTypes.string,
     recurringPattern: PropTypes.shape({
-      frequency: PropTypes.string.isRequired,
-      interval: PropTypes.number.isRequired,
+      frequency: PropTypes.oneOf(['daily', 'weekly', 'monthly']),
+      interval: PropTypes.number,
       endDate: PropTypes.string,
-      daysOfWeek: PropTypes.array.isRequired
-    }).isRequired
+      daysOfWeek: PropTypes.arrayOf(PropTypes.string)
+    })
   }).isRequired,
   onEventDataChange: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired
