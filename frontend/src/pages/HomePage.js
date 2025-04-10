@@ -68,7 +68,7 @@ const HomePage = () => {
                       <div key={index} className="h-full">
                         <img 
                           src={imageUrl} 
-                          alt={`Hero ${index + 1}`} 
+                          alt={`Hero image ${index}`} 
                           className="hero-image-fullscreen"
                           style={{ objectFit: 'cover', filter: 'none' }}
                         />

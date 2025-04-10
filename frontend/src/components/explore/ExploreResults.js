@@ -11,9 +11,9 @@ import EventCard from '../common/EventCard';
 const ExploreResults = ({ results, isLoading }) => {
   // Render loading skeleton
   const renderSkeleton = () => (
-    <div className="animate-pulse space-y-6">
-      {[1, 2, 3].map(i => (
-        <div key={i} className="bg-gray-200 h-48 rounded-lg w-full"></div>
+    <div className="animate-pulse grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {[1, 2, 3, 4, 5, 6].map(i => (
+        <div key={i} className="bg-gray-200 h-48 rounded-lg"></div>
       ))}
     </div>
   );
@@ -33,9 +33,9 @@ const ExploreResults = ({ results, isLoading }) => {
     );
   }
   
-  // Render results
+  // Render results - now using grid for desktop and keeping responsive for mobile
   return (
-    <div className="space-y-10">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
       {results.map(item => {
         // Make sure the item is valid
         if (!item || !item.id) {
@@ -50,6 +50,7 @@ const ExploreResults = ({ results, isLoading }) => {
             item={item} 
             type={item.type || 'event'} // Default to 'event' if type is missing
             source="explore"
+            fullWidth={true} // Add fullWidth prop to make cards fill their grid cells
           />
         );
       })}

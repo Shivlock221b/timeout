@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
-import { FaMapMarkerAlt, FaTag, FaClock, FaCalendarAlt, FaUsers } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaUser, FaTag, FaClock, FaCalendarAlt, FaUsers } from 'react-icons/fa';
 import { useScrollToElement } from '../../context/ScrollToElementContext';
 
 /**
@@ -11,7 +11,14 @@ import { useScrollToElement } from '../../context/ScrollToElementContext';
  * Following the Single Responsibility Principle - this component handles displaying all card types
  * with appropriate variations based on the type
  */
-const EventCard = ({ item, size = 'medium', source = 'onlyforyou', type = 'event', showDescription = false }) => {
+const EventCard = ({ 
+  item, 
+  size = 'medium', 
+  source = 'onlyforyou', 
+  type = 'event', 
+  showDescription = false,
+  fullWidth = false // New prop to control width behavior
+}) => {
   const navigate = useNavigate();
   const { setScrollTarget } = useScrollToElement();
   
@@ -38,6 +45,9 @@ const EventCard = ({ item, size = 'medium', source = 'onlyforyou', type = 'event
 
   // Generate a unique element ID for this card
   const cardElementId = `${type}-card-${id}`;
+
+  // For backward compatibility, reshape data if needed
+  const event = item.event || item;
 
   // Different navigation paths based on card type
   const getNavigationPath = () => {
@@ -105,19 +115,19 @@ const EventCard = ({ item, size = 'medium', source = 'onlyforyou', type = 'event
   // Different class sets based on card size
   const sizeClasses = {
     small: {
-      card: 'max-w-xs',
+      card: fullWidth ? 'w-full' : 'max-w-xs',
       image: 'h-40',
       title: 'text-lg',
       description: 'line-clamp-2', // Limit to 2 lines for small cards
     },
     medium: {
-      card: 'max-w-sm',
+      card: fullWidth ? 'w-full' : 'max-w-sm',
       image: 'h-48',
       title: 'text-xl',
       description: 'line-clamp-3', // Limit to 3 lines for medium cards
     },
     large: {
-      card: 'max-w-md',
+      card: fullWidth ? 'w-full' : 'max-w-md',
       image: 'h-56',
       title: 'text-2xl',
       description: 'line-clamp-4', // Limit to 4 lines for large cards
@@ -344,7 +354,8 @@ EventCard.propTypes = {
   size: PropTypes.oneOf(['small', 'medium', 'large']),
   source: PropTypes.string,
   type: PropTypes.oneOf(['event', 'table', 'circle']),
-  showDescription: PropTypes.bool
+  showDescription: PropTypes.bool,
+  fullWidth: PropTypes.bool
 };
 
 export default EventCard;

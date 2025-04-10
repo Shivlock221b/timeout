@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FaMapMarkerAlt, FaTag, FaClock, FaCalendarAlt, FaUsers } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaUser, FaTag, FaClock, FaCalendarAlt, FaUsers } from 'react-icons/fa';
 
 /**
  * EventDetailInfo Component
